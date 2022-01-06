@@ -4,7 +4,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "tailwind": "npx tailwindcss -i ./src/styles/input.css -o ./src/styles/tailwind.css --watch"
   },
   "dependencies": {
     "@shopify/app-bridge-react": "^2.0.5",

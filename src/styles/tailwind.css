@@ -15,10 +15,6 @@
   grid-column: span 7 / span 7
 }
 
-.col-span-2 {
-  grid-column: span 2 / span 2
-}
-
 .col-start-8 {
   grid-column-start: 8
 }
@@ -37,10 +33,6 @@
 
 .mt-4 {
   margin-top: 1rem
-}
-
-.mb-10 {
-  margin-bottom: 2.5rem
 }
 
 .flex {
