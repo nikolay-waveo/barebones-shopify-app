@@ -5,11 +5,16 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { SWRConfig } from 'swr'
 import App from './App'
+import '@shopify/polaris/build/esm/styles.css';
 import './styles/tailwind.css'
 
+
+
 // Pull query and parse params
-const querySearch = (query: string, string: string) => {
-  const queryArray = query.split("&");
+const querySearch = (string: string) => {
+  const query = window.location.search;
+  const queryTrim = query.split("?")[1];
+  const queryArray = queryTrim.split("&");
   const [_, res] = queryArray
     ?.map(item => item.split("="))
     .find(item => item[0] === string ) || ['', '']
@@ -18,10 +23,10 @@ const querySearch = (query: string, string: string) => {
 }
 
 const API_KEY = 'c134a5893790b1df33fc2206d8416eab';
-// Return in Base64 for decodeConfig() in Provider component to work
+const SHOP_ORIGIN = querySearch("shop");
+//* Return in Base64 for decodeConfig() in Provider component to work
 // https://github.com/Shopify/shopify-app-bridge/issues/48#issuecomment-840665716
-const HOST = btoa(querySearch(window.location.search, "shop") + '/admin');
-const SHOP_ORIGIN = querySearch(window.location.search, "shop");
+const HOST = btoa(SHOP_ORIGIN + '/admin');
 
 const swrConfig = {
   fetcher: (resource: any, init: any) =>
