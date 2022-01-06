@@ -12,7 +12,7 @@ type TSETSubscribeProps = TSubscribeProps & {
 }
 
 async function useSETShopSubscribeSettings(props: TSETSubscribeProps) {
-  return await client.put(`https://shopify.perkd.io/perkd-pubsub-app/subscribe`, {
+  return await client.put(`https://shopify.perkd.io/products-pubsub-app-dev/subscribe`, {
     headers: {
       "x-shopify-shop-domain": `${props.origin}`,
       "Content-Type": "application/json",
@@ -26,7 +26,7 @@ async function useSETShopSubscribeSettings(props: TSETSubscribeProps) {
 }
 
 async function useDELETEShopSubscribeSettings(props: TSubscribeProps) {
-  return await client.delete(`https://shopify.perkd.io/perkd-pubsub-app/subscribe`, {
+  return await client.delete(`https://shopify.perkd.io/products-pubsub-app-dev/subscribe`, {
     headers: {
       "x-shopify-shop-domain": `${props.origin}`,
       "Content-Type": "application/json",

@@ -8,8 +8,7 @@ import App from './App'
 import '@shopify/polaris/build/esm/styles.css';
 import './styles/tailwind.css'
 
-// Pull apiKey from path 
-
+// Pull apiKey from path shopify:domain/admin/apps/[apiKey]
 const apiKeyGet = () => {
   const currentURL = window.location.href;
   const pathnameTrim = currentURL.split('apps/').pop();

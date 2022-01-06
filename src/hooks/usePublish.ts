@@ -10,7 +10,7 @@ type TSETPublishProps = TPublishProps & {
 }
 
 async function useSETShopPublishSettings(props: TSETPublishProps) {
-  return await client.put(`https://shopify.perkd.io/perkd-pubsub-app/publish`, {
+  return await client.put(`https://shopify.perkd.io/products-pubsub-app-dev/publish`, {
     headers: {
       "x-shopify-shop-domain": `${props.origin}`,
       "Content-Type": "application/json",
@@ -23,7 +23,7 @@ async function useSETShopPublishSettings(props: TSETPublishProps) {
 }
 
 async function useDELETEShopPublishSettings(props: TPublishProps) {
-  return await client.delete(`https://shopify.perkd.io/perkd-pubsub-app/publish`, {
+  return await client.delete(`https://shopify.perkd.io/products-pubsub-app-dev/publish`, {
     headers: {
       "x-shopify-shop-domain": `${props.origin}`,
       "Content-Type": "application/json",
