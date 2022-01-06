@@ -1,4 +1,4 @@
-import { Frame, Page, ResourceItem, TextStyle } from '@shopify/polaris';
+import { Frame, Page, ResourceItem, TextStyle, Toast } from '@shopify/polaris';
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import {
   CancelSmallMinor,
@@ -15,6 +15,7 @@ import Toggle from './components/Toggle';
 import { usePublish } from './hooks/usePublish';
 import { useSettings } from './hooks/useSettings';
 import { useSubscribe } from './hooks/useSubscribe';
+import ModalWithForm from './components/ModalWithForm';
 
 
 type TSubscription = {
@@ -28,12 +29,6 @@ type TSubscription = {
 interface IAppProps {
   shopOrigin: string
 }
-
-// const App: FC<IAppProps> = ({
-//   shopOrigin
-// }) => {
-//   return <div className='text-red-600'>{shopOrigin}</div>
-// }
 
 const App: FC<IAppProps> = ({
   shopOrigin
@@ -286,6 +281,15 @@ const App: FC<IAppProps> = ({
     publishedTo.forEach(store => onPublishDisconnect(store))
   }, [])
 
+
+  //? ------------------------------------------
+
+  const [hasError, setHasError] = useState(false)
+  const [errorMessage, setErrorMessage] = useState("")
+  const toggleHasError = useCallback(() => setHasError((hasError) => !hasError),[])
+
+  //? ------------------------------------------
+
   return (
     <Frame>
       <Page
@@ -419,6 +423,7 @@ const App: FC<IAppProps> = ({
                                 destructive: true,
                               },
                             ]} />
+                            {hasError && <Toast content={errorMessage} error onDismiss={toggleHasError} /> }
                         </ResourceItem> 
                       )
                   }}/>
@@ -561,7 +566,7 @@ const App: FC<IAppProps> = ({
                   )
               }} />
 
-            <Modal
+            {/* <Modal
               title="Subscribe to a new store"
               content="You can add the store subscription link here to subscribe to that
                 store and recieve product updates from them."
@@ -584,6 +589,72 @@ const App: FC<IAppProps> = ({
               }}
               toast={{
                 content: "Request Sent",
+              }} /> */}
+
+            <ModalWithForm
+              title="Subscribe to a new store"
+              content="You can add the store subscription link here to subscribe to that
+                store and recieve product updates from them."
+              isModalOpen={showAddToListModal}
+              modalHandler={setShowAddToListModal}
+              primaryAction={{
+                actionText: "Subscribe",
+                actionHandler: (e) => addToSubscribedToListHandler(e)
+              }}
+              inputAction={{
+                id: "modalInput",
+                label: "Store Subscription Link",
+                placeholder: "Example: store.myshopify.com",
+                errorMessage: "Invalid input",
+                errorHandler: (input) => {
+                  const storeURLPattern = /(\w+-)*\w+(.myshopify.com)/
+                  if(!input) return true
+                  return !storeURLPattern.test(input)
+                }
+              }}
+              toast={{
+                content: "Request Sent",
+              }}
+              onFormSubmit={{
+                actionHandler: (store: {
+                  url: string,
+                  id: string,
+                }) => {
+                  const {
+                    url,
+                    id,
+                  } = store
+              
+                  const storeID = id
+                  
+                  setSubscribe({
+                    origin: user,
+                    subscriberShop: url,
+                    id: storeID,
+                  })
+                  .then(({
+                    shop,
+                    inventoryLocationId,
+                    status,
+                    code, 
+                    message,
+                  }) => {
+                    console.log(!!code)
+                    if(code) {
+                      setErrorMessage(message)
+                      setHasError(true)
+                    } else {
+                      setSubscribedTo([
+                        ...subscribedTo,
+                        {
+                          storeURL: shop,
+                          id: inventoryLocationId,
+                          status: status,
+                        }
+                      ])
+                    } 
+                  })
+                }
               }} />
 
           </Section>         
