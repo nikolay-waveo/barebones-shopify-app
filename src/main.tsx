@@ -8,7 +8,14 @@ import App from './App'
 import '@shopify/polaris/build/esm/styles.css';
 import './styles/tailwind.css'
 
-
+// Pull apiKey from path 
+const apiKeyGet = () => {
+  const sampleURL = 'https://dev-subscriber.myshopify.com/admin/apps/c134a5893790b1df33fc2206d8416eab/?hmac=a34822c96b1ee1bafe0d383c6b3bc7ec2d4d63b2d1881f08daed39f5193f73cc&shop=dev-subscriber.myshopify.com&timestamp=1641441882'
+  const currentURL = sampleURL; //window.location.href;
+  const pathnameTrim = currentURL.split('apps/')[1];
+  const apiTrim = pathnameTrim.split('/')[0];
+  return apiTrim;
+}
 
 // Pull query and parse params
 const querySearch = (string: string) => {
@@ -22,7 +29,7 @@ const querySearch = (string: string) => {
   return res;
 }
 
-const API_KEY = 'c134a5893790b1df33fc2206d8416eab';
+const API_KEY = apiKeyGet();
 const SHOP_ORIGIN = querySearch("shop");
 //* Return in Base64 for decodeConfig() in Provider component to work
 // https://github.com/Shopify/shopify-app-bridge/issues/48#issuecomment-840665716
