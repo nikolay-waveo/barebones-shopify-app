@@ -18,8 +18,6 @@ interface TShopSettingsResult extends TShopSettings {
   subscribed?: Array<IShop>;
 }
 
-const { API_ENDPOINT } = process.env;
-
 function useGETShopSettings(shop: string): ({
   data: TShopSettingsResult,
   isLoading: boolean,
@@ -29,7 +27,7 @@ function useGETShopSettings(shop: string): ({
   const { data, error} = useSWR(`https://shopify.perkd.io/products-pubsub-app-dev/settings?shop=${shop}`);
 
   // Bind this to only work on submit
-  mutate(`https://shopify.perkd.io/products-pubsub-app-dev/settings?shop=${shop}`);
+  // mutate(`https://shopify.perkd.io/products-pubsub-app-dev/settings?shop=${shop}`);
 
   return {
     data,

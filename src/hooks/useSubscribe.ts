@@ -11,8 +11,6 @@ type TSETSubscribeProps = TSubscribeProps & {
   id: string;
 }
 
-const { API_ENDPOINT } = process.env;
-
 async function useSETShopSubscribeSettings(props: TSETSubscribeProps) {
   return await client.put(`https://shopify.perkd.io/products-pubsub-app-dev/subscribe`, {
     headers: {

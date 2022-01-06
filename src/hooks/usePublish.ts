@@ -9,8 +9,6 @@ type TSETPublishProps = TPublishProps & {
   accept: boolean;
 }
 
-const { API_ENDPOINT } = process.env;
-
 async function useSETShopPublishSettings(props: TSETPublishProps) {
   return await client.put(`https://shopify.perkd.io/products-pubsub-app-dev/publish`, {
     headers: {
