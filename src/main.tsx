@@ -12,15 +12,15 @@ import './styles/tailwind.css'
 const apiKeyGet = () => {
   const sampleURL = 'https://dev-subscriber.myshopify.com/admin/apps/c134a5893790b1df33fc2206d8416eab/?hmac=a34822c96b1ee1bafe0d383c6b3bc7ec2d4d63b2d1881f08daed39f5193f73cc&shop=dev-subscriber.myshopify.com&timestamp=1641441882'
   const currentURL = sampleURL; //window.location.href;
-  const pathnameTrim = currentURL.split('apps/')[1];
-  const apiTrim = pathnameTrim.split('/')[0];
+  const pathnameTrim = currentURL.split('apps/').pop();
+  const apiTrim = pathnameTrim.split('/').shift();
   return apiTrim;
 }
 
 // Pull query and parse params
 const querySearch = (string: string) => {
   const query = window.location.search;
-  const queryTrim = query.split("?")[1];
+  const queryTrim = query.split("?").pop();
   const queryArray = queryTrim.split("&");
   const [_, res] = queryArray
     ?.map(item => item.split("="))
