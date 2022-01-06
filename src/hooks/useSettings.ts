@@ -24,10 +24,10 @@ function useGETShopSettings(shop: string): ({
   isError: any,
 }) {
 
-  const { data, error} = useSWR(`https://shopify.perkd.io/products-pubsub-app-dev/settings?shop=${shop}`);
+  const { data, error} = useSWR(`https://shopify.perkd.io/perkd-pubsub-app/settings?shop=${shop}`);
 
   // Bind this to only work on submit
-  // mutate(`https://shopify.perkd.io/products-pubsub-app-dev/settings?shop=${shop}`);
+  // mutate(`https://shopify.perkd.io/perkd-pubsub-app/settings?shop=${shop}`);
 
   return {
     data,
@@ -45,7 +45,7 @@ function useGETShopSettings(shop: string): ({
  */
 
 async function useSETShopSettings(shop: string, settings: TShopSettings) {
-  return await client.post(`https://shopify.perkd.io/products-pubsub-app-dev/settings`, {
+  return await client.post(`https://shopify.perkd.io/perkd-pubsub-app/settings`, {
     headers: {
       "x-shopify-shop-domain": `${shop}`,
       Accept: "application/json",
