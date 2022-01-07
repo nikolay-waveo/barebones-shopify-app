@@ -11,8 +11,13 @@ type TSETSubscribeProps = TSubscribeProps & {
   id: string;
 }
 
-async function useSETShopSubscribeSettings(props: TSETSubscribeProps) {
-  return await client.put(`https://shopify.perkd.io/products-pubsub-app-dev/subscribe`, {
+type TApp = {
+  host: string,
+  name: string,
+}
+
+async function useSETShopSubscribeSettings(props: TSETSubscribeProps, app: TApp) {
+  return await client.put(`https://${app.host}/${app.name}/subscribe`, {
     headers: {
       "x-shopify-shop-domain": `${props.origin}`,
       "Content-Type": "application/json",
@@ -25,8 +30,8 @@ async function useSETShopSubscribeSettings(props: TSETSubscribeProps) {
   });
 }
 
-async function useDELETEShopSubscribeSettings(props: TSubscribeProps) {
-  return await client.delete(`https://shopify.perkd.io/products-pubsub-app-dev/subscribe`, {
+async function useDELETEShopSubscribeSettings(props: TSubscribeProps, app: TApp) {
+  return await client.delete(`https://${app.host}/${app.name}/subscribe`, {
     headers: {
       "x-shopify-shop-domain": `${props.origin}`,
       "Content-Type": "application/json",

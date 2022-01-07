@@ -8,31 +8,30 @@ import App from './App'
 import '@shopify/polaris/build/esm/styles.css';
 import './styles/tailwind.css'
 
-// Pull apiKey from path shopify:domain/admin/apps/[apiKey]
-const apiKeyGet = () => {
-  const currentURL = window.location.href;
-  const pathnameTrim = currentURL.split('apps/').pop();
-  const apiTrim = pathnameTrim.split('/').shift();
-  return apiTrim;
+// Pull path params
+const getPathParams = () => {
+  const url = window.location.href
+  const urlTrim = url.split('//').pop();
+  const urlArray = urlTrim.split('/');
+  return urlArray;
 }
 
 // Pull query and parse params
-const querySearch = (string: string) => {
+const querySearch = (string: string): string => {
   const query = window.location.search;
   const queryTrim = query.split("?").pop();
   const queryArray = queryTrim.split("&");
   const [_, res] = queryArray
     ?.map(item => item.split("="))
     .find(item => item[0] === string ) || ['', '']
-
   return res;
 }
 
 const API_KEY = querySearch("apiKey");
 const SHOP_ORIGIN = querySearch("shop");
-//* Return in Base64 for decodeConfig() in Provider component to work
-// https://github.com/Shopify/shopify-app-bridge/issues/48#issuecomment-840665716
 const HOST = querySearch("host");
+const [APP_HOST, APP_NAME] = getPathParams();
+
 
 const swrConfig = {
   fetcher: (resource: any, init: any) =>
@@ -44,12 +43,17 @@ const config = {
   host: HOST,
 }
 
+const appDataConfig = {
+  appHost: APP_HOST, 
+  appName: APP_NAME
+}
+
 ReactDOM.render(
   <React.StrictMode>
     <SWRConfig value={swrConfig}>
       <AppBridgeProvider config={config}>
         <AppProvider i18n={enTranslations}>
-          <App shopOrigin={SHOP_ORIGIN} />
+          <App shopOrigin={SHOP_ORIGIN} appData={appDataConfig} />
         </AppProvider>
       </AppBridgeProvider>
     </SWRConfig>

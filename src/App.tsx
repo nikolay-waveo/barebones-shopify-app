@@ -27,14 +27,19 @@ type TSubscription = {
 }
 
 interface IAppProps {
-  shopOrigin: string
+  shopOrigin: string,
+  appData: {
+    appHost: string,
+    appName: string,
+  }
 }
 
 const App: FC<IAppProps> = ({
-  shopOrigin
+  shopOrigin,
+  appData,
 }) => {
 
-  const [user, _] = useState(shopOrigin)
+  const [user] = useState(shopOrigin)
   const [publishedTo, setPublishedTo] = useState<TSubscription['subscription'][]>([]);
   const [subscribedTo, setSubscribedTo] = useState<TSubscription['subscription'][]>([]);
   const [publishMode, setPublishMode] = useState(false)
@@ -47,6 +52,11 @@ const App: FC<IAppProps> = ({
   const [itemIsLoading, setItemIsLoading] = useState(false)
 
   const renderCount = useRef(0)
+
+  const appDataInit = {
+    host: appData.appHost,
+    name: appData.appName
+  }
 
   const {
     useGETShopSettings: getSettings, 
@@ -63,8 +73,7 @@ const App: FC<IAppProps> = ({
     useDELETEShopSubscribeSettings: deleteSubscribe
   } = useSubscribe()
 
-  //! Fix "[app] missing credentials"
-  const {data, isLoading} = getSettings(user)
+  const {data, isLoading} = getSettings(user, appDataInit)
 
   useEffect(() => {
     // GET incoming and outgoing subscriptions
@@ -139,7 +148,8 @@ const App: FC<IAppProps> = ({
       origin: user,
       subscriberShop: url,
       id: storeID,
-    })
+    }, 
+    appDataInit)
     .then(({
       shop,
       inventoryLocationId,
@@ -169,7 +179,8 @@ const App: FC<IAppProps> = ({
       origin: user,
       publisherShop: store.storeURL,
       accept: true,
-    })
+    },
+    appDataInit)
     .then((_): void => {
       const newList = publishedTo.map((item) => item.storeURL === store.storeURL ? {...item, status: "active"} : item )
       setPublishedTo(newList);
@@ -181,7 +192,8 @@ const App: FC<IAppProps> = ({
       deletePublish({
         origin: user,
         publisherShop: store.storeURL,
-      })
+      },
+      appDataInit)
       .then((_): void => {
         const newList = publishedTo.filter((item) => item.storeURL !== store.storeURL);
         setPublishedTo(newList);
@@ -192,7 +204,8 @@ const App: FC<IAppProps> = ({
         origin: user,
         publisherShop: store.storeURL,
         accept: false,
-      })
+      },
+      appDataInit)
       .then((_): void => {
         const newList = publishedTo.filter((item) => item.storeURL !== store.storeURL);
         setPublishedTo(newList);
@@ -204,7 +217,8 @@ const App: FC<IAppProps> = ({
     deleteSubscribe({
       origin: user,
       subscriberShop: store.storeURL
-    })
+    },
+    appDataInit)
     .then(r => console.log('onSubDis', r))
     .then(_ => {
       const newList = subscribedTo.filter((item) => item.storeURL !== store.storeURL);
@@ -235,7 +249,8 @@ const App: FC<IAppProps> = ({
     } else {
       setSettings(user, {
         publish: !publishMode
-      })
+      },
+      appDataInit)
       .then(({
         publish
       }): void => {
@@ -248,7 +263,8 @@ const App: FC<IAppProps> = ({
   const handleDeactivatePublishModal = useCallback(() => {
     setSettings(user, {
       publish: false
-    })
+    },
+    appDataInit)
     .then((_): void => {
       setPublishMode(false)
       setIsPublishActive(false)
@@ -260,7 +276,8 @@ const App: FC<IAppProps> = ({
     handleDisconnectAll()
     setSettings(user, {
       publish: false
-    })
+    },
+    appDataInit)
     .then((_): void => {
       setPublishMode(false)
       setIsPublishActive(false)
@@ -271,7 +288,8 @@ const App: FC<IAppProps> = ({
   const handlePause = useCallback(() => {
     setSettings(user, {
       publish: isPublishPaused
-    })
+    },
+    appDataInit)
     .then(({
       publish
     }): void => setIsPublishPaused(!publish))
@@ -293,7 +311,7 @@ const App: FC<IAppProps> = ({
   return (
     <Frame>
       <Page
-        title="Store Product Sync v1"
+        title="Store Product Sync"
         fullWidth={true}>
         <div className="grid grid-cols-1 gap-10 mb-20">
           <Section
@@ -351,7 +369,6 @@ const App: FC<IAppProps> = ({
                 <CalloutCard 
                   title="Get your store link"
                   content="Share your store link with other businesses to allow them to subscribe to your store."
-                  illustrationSRC="https://cdn.shopify.com/s/assets/admin/checkout/settings-customizecart-705f57c725ac05be5a34ec20c05b94298cb8afd10aac7bd9c7ad02030f48cfa0.svg"
                   primaryAction={{
                     content: 'Get store link',
                     onAction: openCalloutCardModal,
@@ -475,29 +492,17 @@ const App: FC<IAppProps> = ({
               title="Get your store link"
               content={
                 <p>
-                  Your store link is <TextStyle variation="strong">{user}</TextStyle>. 
+                  Your store link is <TextStyle variation="code">{user}</TextStyle>. 
                   Share it with others so that they can find and subscribe to your store.
                 </p>
               }
               isModalOpen={showCalloutCardModal}
               modalHandler={setShowCalloutCardModal} 
-//! Polaris blocks clipboard actions
               primaryAction={{
-                actionText: "Copy Link",
+                actionText: "Continue",
                 actionHandler: (e) => {
-                  navigator.clipboard.writeText(user)
                   setShowCalloutCardModal(false)
                 },
-              }}
-              secondaryActions={[
-                {
-                  actionText: "Cancel",
-                  actionHandler: closeCalloutCardModal,
-                },
-              ]}
-              toast={{
-                content: "Copied to clipboard",
-                duration: 3000
               }} />
             
           </Section>
@@ -631,7 +636,8 @@ const App: FC<IAppProps> = ({
                     origin: user,
                     subscriberShop: url,
                     id: storeID,
-                  })
+                  },
+                  appDataInit)
                   .then(({
                     shop,
                     inventoryLocationId,

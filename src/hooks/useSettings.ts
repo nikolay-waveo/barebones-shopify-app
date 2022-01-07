@@ -13,21 +13,25 @@ type TShopSettings = {
   publish: boolean;
 };
 
+type TApp = {
+  host: string,
+  name: string,
+}
+
 interface TShopSettingsResult extends TShopSettings {
   published?: Array<IShop>;
   subscribed?: Array<IShop>;
 }
 
-function useGETShopSettings(shop: string): ({
+function useGETShopSettings(shop: string, app: TApp ): ({
   data: TShopSettingsResult,
   isLoading: boolean,
   isError: any,
 }) {
 
-  const { data, error} = useSWR(`https://shopify.perkd.io/products-pubsub-app-dev/settings?shop=${shop}`);
+  const { data, error} = useSWR(`https://${app.host}/${app.name}/settings?shop=${shop}`);
 
-  // Bind this to only work on submit
-  // mutate(`https://shopify.perkd.io/products-pubsub-app-dev/settings?shop=${shop}`);
+  mutate(`https://${app.host}/${app.name}/settings?shop=${shop}`);
 
   return {
     data,
@@ -44,8 +48,8 @@ function useGETShopSettings(shop: string): ({
  * @returns
  */
 
-async function useSETShopSettings(shop: string, settings: TShopSettings) {
-  return await client.post(`https://shopify.perkd.io/products-pubsub-app-dev/settings`, {
+async function useSETShopSettings(shop: string, settings: TShopSettings, app: TApp ) {
+  return await client.post(`https://${app.host}/${app.name}/settings`, {
     headers: {
       "x-shopify-shop-domain": `${shop}`,
       Accept: "application/json",
