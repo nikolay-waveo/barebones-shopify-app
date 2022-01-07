@@ -28,7 +28,7 @@ const querySearch = (string: string) => {
   return res;
 }
 
-const API_KEY = apiKeyGet();
+const API_KEY = querySearch("apiKey");
 const SHOP_ORIGIN = querySearch("shop");
 //* Return in Base64 for decodeConfig() in Provider component to work
 // https://github.com/Shopify/shopify-app-bridge/issues/48#issuecomment-840665716
