@@ -1,6 +1,6 @@
 {
-  "name": "barebones-shopify-app",
-  "version": "0.0.0",
+  "name": "perkd-pubsub-app",
+  "version": "0.0.1",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
