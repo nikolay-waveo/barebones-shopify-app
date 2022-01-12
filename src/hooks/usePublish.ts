@@ -9,13 +9,11 @@ type TSETPublishProps = TPublishProps & {
   accept: boolean;
 }
 
-type TApp = {
-  host: string,
-  name: string,
-}
+const host = import.meta.env.VITE_APP_HOST as string;
+const name = import.meta.env.VITE_APP_name as string;
 
-async function useSETShopPublishSettings(props: TSETPublishProps, app: TApp) {
-  return await client.put(`https://${app.host}/${app.name}/publish`, {
+async function useSETShopPublishSettings(props: TSETPublishProps) {
+  return await client.put(`https://${host}/${name}/publish`, {
     headers: {
       "x-shopify-shop-domain": `${props.origin}`,
       "Content-Type": "application/json",
@@ -27,8 +25,8 @@ async function useSETShopPublishSettings(props: TSETPublishProps, app: TApp) {
   });
 }
 
-async function useDELETEShopPublishSettings(props: TPublishProps, app: TApp) {
-  return await client.delete(`https://${app.host}/${app.name}/publish`, {
+async function useDELETEShopPublishSettings(props: TPublishProps) {
+  return await client.delete(`https://${host}/${name}/publish`, {
     headers: {
       "x-shopify-shop-domain": `${props.origin}`,
       "Content-Type": "application/json",

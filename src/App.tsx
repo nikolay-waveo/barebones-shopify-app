@@ -28,15 +28,10 @@ type TSubscription = {
 
 interface IAppProps {
   shopOrigin: string,
-  appData: {
-    appHost: string,
-    appName: string,
-  }
 }
 
 const App: FC<IAppProps> = ({
   shopOrigin,
-  appData,
 }) => {
 
   const [user] = useState(shopOrigin)
@@ -53,11 +48,6 @@ const App: FC<IAppProps> = ({
 
   const renderCount = useRef(0)
 
-  const appDataInit = {
-    host: appData.appHost,
-    name: appData.appName
-  }
-
   const {
     useGETShopSettings: getSettings, 
     useSETShopSettings: setSettings
@@ -73,7 +63,7 @@ const App: FC<IAppProps> = ({
     useDELETEShopSubscribeSettings: deleteSubscribe
   } = useSubscribe()
 
-  const {data, isLoading} = getSettings(user, appDataInit)
+  const {data, isLoading} = getSettings(user)
 
   useEffect(() => {
     // GET incoming and outgoing subscriptions
@@ -148,8 +138,7 @@ const App: FC<IAppProps> = ({
       origin: user,
       subscriberShop: url,
       id: storeID,
-    }, 
-    appDataInit)
+    })
     .then(({
       shop,
       inventoryLocationId,
@@ -179,8 +168,7 @@ const App: FC<IAppProps> = ({
       origin: user,
       publisherShop: store.storeURL,
       accept: true,
-    },
-    appDataInit)
+    })
     .then((_): void => {
       const newList = publishedTo.map((item) => item.storeURL === store.storeURL ? {...item, status: "active"} : item )
       setPublishedTo(newList);
@@ -192,8 +180,7 @@ const App: FC<IAppProps> = ({
       deletePublish({
         origin: user,
         publisherShop: store.storeURL,
-      },
-      appDataInit)
+      })
       .then((_): void => {
         const newList = publishedTo.filter((item) => item.storeURL !== store.storeURL);
         setPublishedTo(newList);
@@ -204,8 +191,7 @@ const App: FC<IAppProps> = ({
         origin: user,
         publisherShop: store.storeURL,
         accept: false,
-      },
-      appDataInit)
+      })
       .then((_): void => {
         const newList = publishedTo.filter((item) => item.storeURL !== store.storeURL);
         setPublishedTo(newList);
@@ -217,8 +203,7 @@ const App: FC<IAppProps> = ({
     deleteSubscribe({
       origin: user,
       subscriberShop: store.storeURL
-    },
-    appDataInit)
+    })
     .then(r => console.log('onSubDis', r))
     .then(_ => {
       const newList = subscribedTo.filter((item) => item.storeURL !== store.storeURL);
@@ -249,8 +234,7 @@ const App: FC<IAppProps> = ({
     } else {
       setSettings(user, {
         publish: !publishMode
-      },
-      appDataInit)
+      })
       .then(({
         publish
       }): void => {
@@ -263,8 +247,7 @@ const App: FC<IAppProps> = ({
   const handleDeactivatePublishModal = useCallback(() => {
     setSettings(user, {
       publish: false
-    },
-    appDataInit)
+    })
     .then((_): void => {
       setPublishMode(false)
       setIsPublishActive(false)
@@ -276,8 +259,7 @@ const App: FC<IAppProps> = ({
     handleDisconnectAll()
     setSettings(user, {
       publish: false
-    },
-    appDataInit)
+    })
     .then((_): void => {
       setPublishMode(false)
       setIsPublishActive(false)
@@ -288,8 +270,7 @@ const App: FC<IAppProps> = ({
   const handlePause = useCallback(() => {
     setSettings(user, {
       publish: isPublishPaused
-    },
-    appDataInit)
+    })
     .then(({
       publish
     }): void => setIsPublishPaused(!publish))
@@ -636,8 +617,7 @@ const App: FC<IAppProps> = ({
                     origin: user,
                     subscriberShop: url,
                     id: storeID,
-                  },
-                  appDataInit)
+                  })
                   .then(({
                     shop,
                     inventoryLocationId,

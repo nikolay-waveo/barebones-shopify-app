@@ -11,13 +11,11 @@ type TSETSubscribeProps = TSubscribeProps & {
   id: string;
 }
 
-type TApp = {
-  host: string,
-  name: string,
-}
+const host = import.meta.env.VITE_APP_HOST as string;
+const name = import.meta.env.VITE_APP_name as string;
 
-async function useSETShopSubscribeSettings(props: TSETSubscribeProps, app: TApp) {
-  return await client.put(`https://${app.host}/${app.name}/subscribe`, {
+async function useSETShopSubscribeSettings(props: TSETSubscribeProps) {
+  return await client.put(`https://${host}/${name}/subscribe`, {
     headers: {
       "x-shopify-shop-domain": `${props.origin}`,
       "Content-Type": "application/json",
@@ -30,8 +28,8 @@ async function useSETShopSubscribeSettings(props: TSETSubscribeProps, app: TApp)
   });
 }
 
-async function useDELETEShopSubscribeSettings(props: TSubscribeProps, app: TApp) {
-  return await client.delete(`https://${app.host}/${app.name}/subscribe`, {
+async function useDELETEShopSubscribeSettings(props: TSubscribeProps) {
+  return await client.delete(`https://${host}/${name}/subscribe`, {
     headers: {
       "x-shopify-shop-domain": `${props.origin}`,
       "Content-Type": "application/json",

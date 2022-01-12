@@ -13,25 +13,23 @@ type TShopSettings = {
   publish: boolean;
 };
 
-type TApp = {
-  host: string,
-  name: string,
-}
+const host = import.meta.env.VITE_APP_HOST as string;
+const name = import.meta.env.VITE_APP_NAME as string;
 
 interface TShopSettingsResult extends TShopSettings {
   published?: Array<IShop>;
   subscribed?: Array<IShop>;
 }
 
-function useGETShopSettings(shop: string, app: TApp ): ({
+function useGETShopSettings(shop: string): ({
   data: TShopSettingsResult,
   isLoading: boolean,
   isError: any,
 }) {
 
-  const { data, error} = useSWR(`https://${app.host}/${app.name}/settings?shop=${shop}`);
+  const { data, error} = useSWR(`https://${host}/${name}/settings?shop=${shop}`);
 
-  mutate(`https://${app.host}/${app.name}/settings?shop=${shop}`);
+  mutate(`https://${host}/${name}/settings?shop=${shop}`);
 
   return {
     data,
@@ -48,8 +46,8 @@ function useGETShopSettings(shop: string, app: TApp ): ({
  * @returns
  */
 
-async function useSETShopSettings(shop: string, settings: TShopSettings, app: TApp ) {
-  return await client.post(`https://${app.host}/${app.name}/settings`, {
+async function useSETShopSettings(shop: string, settings: TShopSettings) {
+  return await client.post(`https://${host}/${name}/settings`, {
     headers: {
       "x-shopify-shop-domain": `${shop}`,
       Accept: "application/json",
