@@ -30,8 +30,6 @@ const querySearch = (string: string): string => {
 const API_KEY = querySearch("apiKey");
 const SHOP_ORIGIN = querySearch("shop");
 const HOST = querySearch("host");
-// const [APP_HOST, APP_NAME] = getPathParams();
-
 
 const swrConfig = {
   fetcher: (resource: any, init: any) =>
