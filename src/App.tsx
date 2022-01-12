@@ -6,16 +6,16 @@ import {
   PlayMinor,
   PauseMinor,
 } from '@shopify/polaris-icons';
-import CalloutCard from './components/CalloutCard';
 import Item from './components/Item';
 import List from './components/List';
 import Modal from './components/Modal';
 import Toggle from './components/Toggle';
 import Section from './components/Section';
+import CalloutCard from './components/CalloutCard';
+import ModalWithForm from './components/ModalWithForm';
 import { usePublish } from './hooks/usePublish';
 import { useSettings } from './hooks/useSettings';
 import { useSubscribe } from './hooks/useSubscribe';
-import ModalWithForm from './components/ModalWithForm';
 
 
 type TSubscription = {

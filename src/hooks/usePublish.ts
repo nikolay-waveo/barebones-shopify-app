@@ -10,7 +10,7 @@ type TSETPublishProps = TPublishProps & {
 }
 
 const host = import.meta.env.VITE_APP_HOST as string;
-const name = import.meta.env.VITE_APP_name as string;
+const name = import.meta.env.VITE_APP_NAME as string;
 
 async function useSETShopPublishSettings(props: TSETPublishProps) {
   return await client.put(`https://${host}/${name}/publish`, {

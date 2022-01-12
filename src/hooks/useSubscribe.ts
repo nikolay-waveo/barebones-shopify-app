@@ -12,7 +12,7 @@ type TSETSubscribeProps = TSubscribeProps & {
 }
 
 const host = import.meta.env.VITE_APP_HOST as string;
-const name = import.meta.env.VITE_APP_name as string;
+const name = import.meta.env.VITE_APP_NAME as string;
 
 async function useSETShopSubscribeSettings(props: TSETSubscribeProps) {
   return await client.put(`https://${host}/${name}/subscribe`, {

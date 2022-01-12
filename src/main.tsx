@@ -27,9 +27,14 @@ const querySearch = (string: string): string => {
   return res;
 }
 
-const API_KEY = querySearch("apiKey");
-const SHOP_ORIGIN = querySearch("shop");
-const HOST = querySearch("host");
+// const API_KEY = querySearch("apiKey");
+// const SHOP_ORIGIN = querySearch("shop");
+// const HOST = querySearch("host");
+
+const API_KEY = "c134a5893790b1df33fc2206d8416eab";
+const SHOP_ORIGIN = "dev-subscriber.myshopify.com";
+const HOST = "ZGV2LXN1YnNjcmliZXIubXlzaG9waWZ5LmNvbS9hZG1pbg";
+
 
 const swrConfig = {
   fetcher: (resource: any, init: any) =>
