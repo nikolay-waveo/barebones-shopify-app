@@ -8,14 +8,6 @@ import App from './App'
 import '@shopify/polaris/build/esm/styles.css';
 import './styles/tailwind.css'
 
-// Pull path params
-// const getPathParams = () => {
-//   const url = window.location.href
-//   const urlTrim = url.split('//').pop();
-//   const urlArray = urlTrim.split('/');
-//   return urlArray;
-// }
-
 // Pull query and parse params
 const querySearch = (string: string): string => {
   const query = window.location.search;
@@ -27,14 +19,9 @@ const querySearch = (string: string): string => {
   return res;
 }
 
-// const API_KEY = querySearch("apiKey");
-// const SHOP_ORIGIN = querySearch("shop");
-// const HOST = querySearch("host");
-
-const API_KEY = "c134a5893790b1df33fc2206d8416eab";
-const SHOP_ORIGIN = "dev-subscriber.myshopify.com";
-const HOST = "ZGV2LXN1YnNjcmliZXIubXlzaG9waWZ5LmNvbS9hZG1pbg";
-
+const API_KEY = import.meta.env.VITE_API_KEY as string;
+const SHOP_ORIGIN = querySearch("shop");
+const HOST = querySearch("host");
 
 const swrConfig = {
   fetcher: (resource: any, init: any) =>
