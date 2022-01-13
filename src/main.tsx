@@ -23,7 +23,7 @@ const API_KEY = import.meta.env.VITE_API_KEY as string;
 const SHOP_ORIGIN = querySearch("shop");
 
 //*If host param not present, construct one
-const HOST = querySearch("host") || btoa(SHOP_ORIGIN + '/admin');
+const HOST = querySearch("host") || Buffer.from(SHOP_ORIGIN + '/admin', 'base64').toString('base64');
 
 const swrConfig = {
   fetcher: (resource: any, init: any) =>
