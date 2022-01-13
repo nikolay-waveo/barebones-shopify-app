@@ -7,7 +7,7 @@ export default ({mode}) => {
 
   return defineConfig({
     root: './',
-    base: `/${process.env.VITE_APP_NAME}/`,
+    // base: `/${process.env.VITE_APP_NAME}/`,
     plugins: [react()]
   })
 }
