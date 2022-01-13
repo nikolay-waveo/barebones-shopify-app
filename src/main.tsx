@@ -21,7 +21,9 @@ const querySearch = (string: string): string => {
 
 const API_KEY = import.meta.env.VITE_API_KEY as string;
 const SHOP_ORIGIN = querySearch("shop");
-const HOST = querySearch("host");
+
+//*If host param not present, construct one
+const HOST = querySearch("host") || btoa(SHOP_ORIGIN + '/admin');
 
 const swrConfig = {
   fetcher: (resource: any, init: any) =>
