@@ -102,7 +102,7 @@ const App: FC<IAppProps> = ({
         renderCount.current = renderCount.current + 1;
       }
     }
-  }, [data, isLoading, shopOrigin, user])
+  }, [data, isLoading, user])
 
   //* ---------------------------------------------------------------------------------------------------------------
   // List
@@ -147,9 +147,8 @@ const App: FC<IAppProps> = ({
       message,
     }) => {
       if(code === "not_publishing") {
-        // setErrorMessage(message)
-        // setHasError(true)
-        console.log(message)
+        setErrorMessage(message)
+        setHasError(true)
       } else {
         setSubscribedTo([
           ...subscribedTo,
@@ -353,7 +352,7 @@ const App: FC<IAppProps> = ({
                   primaryAction={{
                     content: 'Get store link',
                     onAction: openCalloutCardModal,
-                  }} /> 
+                  }} />
 
                 <List
                   list={publishedTo}
@@ -386,8 +385,9 @@ const App: FC<IAppProps> = ({
                               },
                               {
                                 status: "active",
-                                tooltip: "There is an active subscription",
-                                statusStyle: "success",
+                                displayStatus: isPublishPaused ? "paused" : "active",
+                                tooltip: isPublishPaused ? "Publishing is currently paused" : "There is an active subscription",
+                                statusStyle: isPublishPaused ? "info" : "success",
                               },
                               {
                                 status: "stopped",
@@ -398,11 +398,6 @@ const App: FC<IAppProps> = ({
                                 status: "declined",
                                 tooltip: "The publisher has declined your subscription request",
                                 statusStyle: "warning",
-                              },
-                              {
-                                status: "paused",
-                                tooltip: "The subscription is active",
-                                statusStyle: "info"
                               }
                             ]}
                             options={[
@@ -469,7 +464,7 @@ const App: FC<IAppProps> = ({
                 content: "Publishing Disabled"
               }} />
 
-            <Modal 
+            <Modal
               title="Get your store link"
               content={
                 <p>
@@ -548,7 +543,7 @@ const App: FC<IAppProps> = ({
                             destructive: true,
                           },
                         ]} />
-                    </ResourceItem> 
+                    </ResourceItem>
                   )
               }} />
 
@@ -643,7 +638,7 @@ const App: FC<IAppProps> = ({
                 }
               }} />
 
-          </Section>         
+          </Section>
         </div>
       </Page>
     </Frame>

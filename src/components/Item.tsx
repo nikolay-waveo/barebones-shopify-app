@@ -13,6 +13,7 @@ interface IItem {
   },
   badges?: {
     status: string,
+    displayStatus?: string, 
     tooltip: string,
     statusStyle?: Status,
     progress?: Progress,
@@ -68,7 +69,7 @@ const Item: React.FC<IItem> = ({
               <Badge 
                 size="small"
                 {...{status: badge.statusStyle}} >
-                {capitalize(status)}
+                {capitalize(badge.displayStatus || status)}
             </Badge>
           </Tooltip> }
       </div>
