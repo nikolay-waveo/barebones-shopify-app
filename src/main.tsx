@@ -19,7 +19,7 @@ const querySearch = (string: string): string => {
   return res;
 }
 
-const API_KEY = import.meta.env.VITE_API_KEY as string;
+const API_KEY = querySearch("apiKey");
 const SHOP_ORIGIN = querySearch("shop");
 
 // *If host param not present, construct one
