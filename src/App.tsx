@@ -307,14 +307,14 @@ const App: FC<IAppProps> = ({
                 publishedTo.length > 0
                 ? {
                     title: isPublishPaused 
-                      ? "Start Publishing"
+                      ? "Resume Publishing"
                       : "Pause Publishing",
                     content: isPublishPaused
-                      ? "Start publishing to allow others to find and subscribe to your store."
+                      ? "Resume publishing to allow others to find and subscribe to your store."
                       : "Pause to stop publishing but keep all current subscriptions to your store.",
                     contentStyle: isPublishPaused && 'positive',
                     primaryAction: {
-                      content: isPublishPaused ? "Start" : "Pause",
+                      content: isPublishPaused ? "Resume" : "Pause",
                       onAction: handlePause,
                       icon: isPublishPaused ? PlayMinor : PauseMinor,
                       primary: isPublishPaused,
