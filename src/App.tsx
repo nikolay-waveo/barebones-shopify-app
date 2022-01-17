@@ -45,6 +45,8 @@ const App: FC<IAppProps> = ({
   const [showCalloutCardModal, setShowCalloutCardModal] = useState(false)
   const [showAddToListModal, setShowAddToListModal] = useState(false)
   const [itemIsLoading, setItemIsLoading] = useState(false)
+  const [errorMessage, setErrorMessage] = useState("")
+  const [hasError, setHasError] = useState(false)
 
   const renderCount = useRef(0)
 
@@ -104,6 +106,16 @@ const App: FC<IAppProps> = ({
     }
   }, [data, isLoading, user])
 
+  const toggleHasError = useCallback(() => setHasError((hasError) => !hasError),[])
+
+  const errorCodeToMessage = (code: string): string => {
+    switch(code) {
+      case "not_publishing":  return "Store not publishing"
+      case "cyclic_dependency": return "Can't subscribe to self"
+      default: return ""
+    }
+  }
+
   //* ---------------------------------------------------------------------------------------------------------------
   // List
 
@@ -146,8 +158,8 @@ const App: FC<IAppProps> = ({
       code, 
       message,
     }) => {
-      if(code === "not_publishing") {
-        setErrorMessage(message)
+      if(code) {
+        setErrorMessage(errorCodeToMessage(code))
         setHasError(true)
       } else {
         setSubscribedTo([
@@ -278,15 +290,6 @@ const App: FC<IAppProps> = ({
   const handleDisconnectAll = useCallback(() => {
     publishedTo.forEach(store => onPublishDisconnect(store))
   }, [])
-
-
-  //? ------------------------------------------
-
-  const [hasError, setHasError] = useState(false)
-  const [errorMessage, setErrorMessage] = useState("")
-  const toggleHasError = useCallback(() => setHasError((hasError) => !hasError),[])
-
-  //? ------------------------------------------
 
   return (
     <Frame>
@@ -620,9 +623,8 @@ const App: FC<IAppProps> = ({
                     code, 
                     message,
                   }) => {
-                    console.log(!!code)
                     if(code) {
-                      setErrorMessage(message)
+                      setErrorMessage(errorCodeToMessage(code))
                       setHasError(true)
                     } else {
                       setSubscribedTo([
