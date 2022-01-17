@@ -20,7 +20,8 @@ const querySearch = (string: string): string => {
 }
 
 const API_KEY = querySearch("apiKey");
-const SHOP_ORIGIN = querySearch("shop");
+// const SHOP_ORIGIN = querySearch("shop");
+const SHOP_ORIGIN = "testing-pub-dev.myshopify.com"
 
 // *If host param not present, construct one
 const HOST = querySearch("host") || window.btoa(SHOP_ORIGIN + '/admin');
@@ -38,11 +39,11 @@ const config = {
 ReactDOM.render(
   <React.StrictMode>
     <SWRConfig value={swrConfig}>
-      <AppBridgeProvider config={config}>
+      {/* <AppBridgeProvider config={config}> */}
         <AppProvider i18n={enTranslations}>
           <App shopOrigin={SHOP_ORIGIN} />
         </AppProvider>
-      </AppBridgeProvider>
+      {/* </AppBridgeProvider> */}
     </SWRConfig>
   </React.StrictMode>,
   document.getElementById('root')
