@@ -109,7 +109,7 @@ const App: FC<IAppProps> = ({
   const errorCodeToMessage = (code: string): string => {
     switch(code) {
       case "not_publishing":  return "Store not publishing"
-      case "cyclic_dependency": return "Can't subscribe to self"
+      case "cyclic_dependency": return "Cannot subscribe to self"
       default: return ""
     }
   }
@@ -155,7 +155,9 @@ const App: FC<IAppProps> = ({
       status,
       code,
     }) => {
+      console.log('rrrr', code)
       if(code) {
+        console.log('test')
         setErrorMessage(errorCodeToMessage(code))
         setHasError(true)
       } else {
@@ -287,11 +289,6 @@ const App: FC<IAppProps> = ({
   const handleDisconnectAll = useCallback(() => {
     publishedTo.forEach(store => onPublishDisconnect(store))
   }, [])
-
-useEffect(() => {
-  console.log(isPublishActive)
-}, [isPublishActive])
-
 
   return (
     <Frame>
@@ -437,10 +434,11 @@ useEffect(() => {
                             destructive: true,
                           },
                         ]} />
-                        {hasError && <Toast content={errorMessage} error onDismiss={toggleHasError} /> }
                       </ResourceItem> 
                     )
                 }}/> }
+
+            {hasError && <Toast content={errorMessage} error onDismiss={toggleHasError} /> }
 
             <Modal
               title="Disconnect All Subscriptions and Disable Publishing"
@@ -567,7 +565,7 @@ useEffect(() => {
                   )
               }} />
 
-            {/* <Modal
+              <Modal
               title="Subscribe to a new store"
               content="You can add the store subscription link here to subscribe to that
                 store and recieve product updates from them."
@@ -590,9 +588,9 @@ useEffect(() => {
               }}
               toast={{
                 content: "Request Sent",
-              }} /> */}
+              }} />
 
-            <ModalWithForm
+            {/* <ModalWithForm
               title="Subscribe to a new store"
               content="You can add the store subscription link here to subscribe to that
                 store and recieve product updates from them."
@@ -604,7 +602,7 @@ useEffect(() => {
               }}
               inputAction={{
                 id: "modalInput",
-                label: "Store Subscription Link",
+                label: "Store Link",
                 placeholder: "Example: store.myshopify.com",
                 errorMessage: "Invalid input",
                 errorHandler: (input) => {
@@ -654,7 +652,7 @@ useEffect(() => {
                     } 
                   })
                 }
-              }} />
+              }} /> */}
 
           </Section>
         </div>
