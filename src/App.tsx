@@ -292,10 +292,9 @@ const App: FC<IAppProps> = ({
     publishedTo.forEach(store => onPublishDisconnect(store))
   }, [])
 
-  const [storeLink, setStoreLink] = useState(false)
-  const [pause, setPause] = useState(false)
-  const storeLinkToggle = useCallback(() => setStoreLink(!storeLink), [setStoreLink, storeLink])
-  const pauseToggle = useCallback(() => setPause(!pause), [setPause, pause])
+useEffect(() => {
+  console.log(isPublishActive)
+}, [isPublishActive])
 
 
   return (
@@ -309,8 +308,8 @@ const App: FC<IAppProps> = ({
             sectionDescription="See which stores are subscribed to you." >
 
             <StorePublishingCard
-              activated={storeLink}
-              primary={!storeLink 
+              activated={!isPublishActive}
+              primary={isPublishActive
                 && {
                     content: "Link",
                     onAction: openCalloutCardModal, 
@@ -327,16 +326,16 @@ const App: FC<IAppProps> = ({
                       content: 'Activate', 
                       active: true,
                       icon: TickMinor,
-                      onAction: storeLinkToggle
+                      onAction: handlePublish
                     },
                   ],
                 }],
               }}
               onDeactivate={
-                publishedTo.length > 0 
+                publishedTo.length > 0
                 ? {
-                  title: <>Store Publishing <span className={pause ? 'text-cyan-600': 'text-green-600'}>
-                    ({pause ? 'Paused' : 'Active'})
+                  title: <>Store Publishing <span className={isPublishPaused ? 'text-cyan-600': 'text-green-600'}>
+                    ({isPublishPaused ? 'Paused' : 'Active'})
                     </span></>,
                   buttonTitle: "Options",
                   content: "Share your store with others, pause publishing or disconnect all stores currently subscribed to you.",
@@ -344,20 +343,20 @@ const App: FC<IAppProps> = ({
                     title: 'Publish options',
                     items: [
                       {
-                        content: pause 
+                        content: isPublishPaused
                           ? 'Resume' 
                           : 'Pause',
-                        active: pause,
-                        suffix: pause 
+                        active: isPublishPaused,
+                        suffix: isPublishPaused 
                           ? <Icon source={PlayMinor} />
                           : <Icon source={PauseMinor} />,
-                        onAction: pauseToggle
+                        onAction: handlePause
                       },
                       {
                         destructive: true,
                         content: 'Disconnect All',
                         suffix: <Icon source={CancelSmallMinor} />,
-                        onAction: storeLinkToggle
+                        onAction: openDisconnectAllModal
                       },
                     ],
                   }],
@@ -373,7 +372,7 @@ const App: FC<IAppProps> = ({
                       destructive: true,
                       content: 'Deactivate',
                       suffix: <Icon source={CancelSmallMinor} />,
-                      onAction: storeLinkToggle
+                      onAction: openDeactivatePublishModal
                     },
                   ],
                 }],
@@ -440,7 +439,7 @@ const App: FC<IAppProps> = ({
                   list={publishedTo}
                   listText={{
                     title: isPublishPaused 
-                      ? <>Subscribers <span className="text-red-600">(Paused)</span></>
+                      ? <>Subscribers <span className="text-cyan-600">(Paused)</span></>
                       : "Subscribers",
                     description: "You can connect, disconnect and track subscriptions to your store.",
                   }}
