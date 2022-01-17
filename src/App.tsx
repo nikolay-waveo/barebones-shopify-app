@@ -1,4 +1,4 @@
-import { Frame, Page, ResourceItem, TextStyle, Toast } from '@shopify/polaris';
+import { Frame, Icon, Page, ResourceItem, TextStyle, Toast } from '@shopify/polaris';
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import {
   CancelSmallMinor,
@@ -16,6 +16,7 @@ import ModalWithForm from './components/ModalWithForm';
 import { usePublish } from './hooks/usePublish';
 import { useSettings } from './hooks/useSettings';
 import { useSubscribe } from './hooks/useSubscribe';
+import StorePublishingCard from './components/StorePublishingCard';
 
 
 type TSubscription = {
@@ -291,6 +292,12 @@ const App: FC<IAppProps> = ({
     publishedTo.forEach(store => onPublishDisconnect(store))
   }, [])
 
+  const [storeLink, setStoreLink] = useState(false)
+  const [pause, setPause] = useState(false)
+  const storeLinkToggle = useCallback(() => setStoreLink(!storeLink), [setStoreLink, storeLink])
+  const pauseToggle = useCallback(() => setPause(!pause), [setPause, pause])
+
+
   return (
     <Frame>
       <Page
@@ -301,7 +308,79 @@ const App: FC<IAppProps> = ({
             sectionTitle="Publish"
             sectionDescription="See which stores are subscribed to you." >
 
-            <Toggle
+            <StorePublishingCard
+              activated={storeLink}
+              primary={!storeLink 
+                && {
+                    content: "Link",
+                    onAction: openCalloutCardModal, 
+                    primary: true,   
+                  }}
+              onActivate={{
+                title: <>Store Publishing <span className="text-red-600">(Disabled)</span></>,
+                buttonTitle: "Options",
+                content: "Allow others to find and subscribe to your store.",
+                sections: [{
+                  title: 'Publish options',
+                  items: [
+                    {
+                      content: 'Activate', 
+                      active: true,
+                      icon: TickMinor,
+                      onAction: storeLinkToggle
+                    },
+                  ],
+                }],
+              }}
+              onDeactivate={
+                publishedTo.length > 0 
+                ? {
+                  title: <>Store Publishing <span className={pause ? 'text-cyan-600': 'text-green-600'}>
+                    ({pause ? 'Paused' : 'Active'})
+                    </span></>,
+                  buttonTitle: "Options",
+                  content: "Share your store with others, pause publishing or disconnect all stores currently subscribed to you.",
+                  sections: [{
+                    title: 'Publish options',
+                    items: [
+                      {
+                        content: pause 
+                          ? 'Resume' 
+                          : 'Pause',
+                        active: pause,
+                        suffix: pause 
+                          ? <Icon source={PlayMinor} />
+                          : <Icon source={PauseMinor} />,
+                        onAction: pauseToggle
+                      },
+                      {
+                        destructive: true,
+                        content: 'Disconnect All',
+                        suffix: <Icon source={CancelSmallMinor} />,
+                        onAction: storeLinkToggle
+                      },
+                    ],
+                  }],
+                }
+              : {
+                title: <>Store Publishing <span className="text-green-600">(Active)</span></>,
+                buttonTitle: "Options",
+                content: "Share your store with others or deactivate publishing.",
+                sections: [{
+                  title: 'Publish options',
+                  items: [
+                    {
+                      destructive: true,
+                      content: 'Deactivate',
+                      suffix: <Icon source={CancelSmallMinor} />,
+                      onAction: storeLinkToggle
+                    },
+                  ],
+                }],
+                }} />
+
+
+            {/* <Toggle
               activated={isPublishActive}
               onActivate={
                 publishedTo.length > 0
@@ -345,7 +424,7 @@ const App: FC<IAppProps> = ({
                   onAction: handlePublish, 
                   primary: true,   
                 },
-              }} />
+              }} /> */}
 
             { isPublishActive && 
               <>
