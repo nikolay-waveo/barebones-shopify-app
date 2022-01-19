@@ -8,23 +8,11 @@ import App from './App'
 import '@shopify/polaris/build/esm/styles.css';
 import './styles/tailwind.css'
 
-// Pull query and parse params
-const querySearch = (string: string): string => {
-  const query = window.location.search;
-  const queryTrim = query.split("?").pop();
-  const queryArray = queryTrim.split("&");
-  const [_, res] = queryArray
-    ?.map(item => item.split("="))
-    .find(item => item[0] === string ) || ['', '']
-  return res;
-}
+const params = new URLSearchParams(window.location.search)
 
-const API_KEY = querySearch("apiKey");
-// const SHOP_ORIGIN = querySearch("shop");
-const SHOP_ORIGIN = "testing-pub-dev.myshopify.com"
-
-// *If host param not present, construct one
-const HOST = querySearch("host") || window.btoa(SHOP_ORIGIN + '/admin');
+const SHOP_ORIGIN = params.get('shop');
+const API_KEY = params.get('apiKey') || 'a9e11c2e82400ef003f1966dadc6332e';
+const HOST = params.get('host') || window.btoa(SHOP_ORIGIN + '/admin');
 
 const swrConfig = {
   fetcher: (resource: any, init: any) =>
