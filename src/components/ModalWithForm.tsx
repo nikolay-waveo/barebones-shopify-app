@@ -4,7 +4,6 @@ import {
   Form,
   FormLayout,
   InlineError,
-  Select,
   Stack,
   TextContainer,
   TextField,
@@ -97,41 +96,19 @@ const Modal: React.FC<IModal> = ({
 
   const modalActions = {}
 
-  if(secondaryActions) {
-    modalActions['secondaryActions'] = [
-      ...secondaryActions.map(({
-        actionText,
-        actionHandler,
-        destructive,
-      }) => ({
-          content: actionText,
-          onAction: actionHandler,
-          destructive: destructive
-      }))
-    ]
-  }
-
-  const [shopifyStore, setShopifyStore] = useState('')
-  const [stores, setStores] = useState(false)
-  const [selected, setSelected] = useState('');
-  const [options, setOptions] = useState([]);
-  const handleSelectChange = useCallback((value) => setSelected(value), []);
-  const storeExists = useCallback(() => {
-    setStores(true)
-    setOptions([
-      {label: 'Today', value: 'today'},
-      {label: 'Yesterday', value: 'yesterday'},
-      {label: 'Last 7 days', value: 'lastWeek'},
-    ])
-    setSelected('today')
-  }, [])
+  modalActions['secondaryActions'] = [
+    ...secondaryActions.map(({
+      actionText,
+      actionHandler,
+      destructive,
+    }) => ({
+        content: actionText,
+        onAction: actionHandler,
+        destructive: destructive
+    }))
+  ]
   
-  const handleGETStore = useCallback(() => {
-   fetch('https://305e299ce9f8da250470ba33677e3a79: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@dev-subscriber.myshopify.com/admin/api/2021-10/locations.json')
-    .then(r => r.json())
-    .then(data => console.log(data))
-  }, []);
-
+  
   return (
     <>
       <polaris.Modal
@@ -142,7 +119,6 @@ const Modal: React.FC<IModal> = ({
           content: primaryAction.actionText,
           onAction: handleSubmit,
           destructive: primaryAction?.destructive,
-          disabled: !!!selected,
         }}
         {...modalActions}>
           <polaris.Modal.Section>
@@ -159,31 +135,26 @@ const Modal: React.FC<IModal> = ({
                 <Form onSubmit={handleSubmit}>
                   <FormLayout>
                     <TextField
-                      label={inputAction.label}
-                      value={shopifyStore}
-                      onChange={(e) => setShopifyStore(e)}
+                      label="Inventory Location ID"
+                      value={inputID}
+                      onChange={(e) => setInputID(e)}
                       autoComplete="off"
-                      connectedRight={
-                        <Button onClick={handleGETStore}>Get Store</Button>
-                      }/>
-
-                    <Select
-                      label="Store Location"
-                      options={options}
-                      onChange={handleSelectChange}
-                      onFocus={() => handleSelectChange(selected)}
-                      value={selected}
-                      disabled={!stores}
+                      />
+                    <TextField
+                      label={inputAction.label}
+                      value={input}
+                      onChange={(e) => setInput(e)}
+                      autoComplete="off"
                       />
                   </FormLayout>
                 </Form>
-                
+
                   { hasError &&
                     <div className='mt-4'>
                       <InlineError message={inputAction.errorMessage} fieldID={inputAction.id} />
                     </div>
                   }
-              </Stack.Item>
+              </Stack.Item> 
             }
             </Stack>
           </polaris.Modal.Section>
