@@ -1,3 +1,4 @@
+import * as Polaris from '@shopify/polaris';
 import { Frame, Page, ResourceItem, TextStyle, Toast } from '@shopify/polaris';
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import {
@@ -15,6 +16,7 @@ import StorePublishingCard from './components/StorePublishingCard';
 import { usePublish } from './hooks/usePublish';
 import { useSettings } from './hooks/useSettings';
 import { useSubscribe } from './hooks/useSubscribe';
+import SetUpInstructions from './components/SetUpInstructions';
 
 type TSubscription = {
   subscription: {
@@ -33,6 +35,7 @@ const App: FC<IAppProps> = ({
 }) => {
 
   const [user] = useState(shopOrigin)
+  const [postInstall, setPostInstall] = useState(true)
   const [publishedTo, setPublishedTo] = useState<TSubscription['subscription'][]>([]);
   const [subscribedTo, setSubscribedTo] = useState<TSubscription['subscription'][]>([]);
   const [publishMode, setPublishMode] = useState(false)
@@ -63,46 +66,46 @@ const App: FC<IAppProps> = ({
     useDELETEShopSubscribeSettings: deleteSubscribe
   } = useSubscribe()
 
-  const {data, isLoading} = getSettings(user)
+  // const {data, isLoading} = getSettings(user)
 
-  useEffect(() => {
-    // GET incoming and outgoing subscriptions
-    if(!isLoading) {
-      const publishedToData = data
-      .published?.map(({
-        shop,
-        inventoryLocationId,
-        status,
-      }) => {
-        return ({
-          storeURL: shop,
-          id: inventoryLocationId,
-          status: status,
-        })
-      }) || []
-      setPublishedTo(publishedToData)
+  // useEffect(() => {
+  //   // GET incoming and outgoing subscriptions
+  //   if(!isLoading) {
+  //     const publishedToData = data
+  //     .published?.map(({
+  //       shop,
+  //       inventoryLocationId,
+  //       status,
+  //     }) => {
+  //       return ({
+  //         storeURL: shop,
+  //         id: inventoryLocationId,
+  //         status: status,
+  //       })
+  //     }) || []
+  //     setPublishedTo(publishedToData)
 
-      const subscribedToData = data
-      .subscribed?.map(({
-        shop,
-        inventoryLocationId,
-        status,
-      }) => {
-        return ({
-          storeURL: shop,
-          id: inventoryLocationId,
-          status: status,
-        })
-      }) || []
-      setSubscribedTo(subscribedToData) 
-      setPublishMode(data.publish)
+  //     const subscribedToData = data
+  //     .subscribed?.map(({
+  //       shop,
+  //       inventoryLocationId,
+  //       status,
+  //     }) => {
+  //       return ({
+  //         storeURL: shop,
+  //         id: inventoryLocationId,
+  //         status: status,
+  //       })
+  //     }) || []
+  //     setSubscribedTo(subscribedToData) 
+  //     setPublishMode(data.publish)
 
-      if(renderCount.current <= 0) {
-        setIsPublishActive(data.publish)
-        renderCount.current = renderCount.current + 1;
-      }
-    }
-  }, [data, isLoading, user])
+  //     if(renderCount.current <= 0) {
+  //       setIsPublishActive(data.publish)
+  //       renderCount.current = renderCount.current + 1;
+  //     }
+  //   }
+  // }, [data, isLoading, user])
 
   const toggleHasError = useCallback(() => setHasError((hasError) => !hasError),[])
 
@@ -292,371 +295,425 @@ const App: FC<IAppProps> = ({
 
   return (
     <Frame>
-      <Page
-        title="Store Product Sync"
-        fullWidth={true}>
-        <div className="grid grid-cols-1 gap-10 mb-20">
-          <Section
-            sectionTitle="Publish"
-            sectionDescription="See which stores are subscribed to you." >
+      { postInstall
+      ? <SetUpInstructions 
+          onFinish={() => setPostInstall(false)}
+          pages={
+            [
+              {
+                src: 'https://via.placeholder.com/720x350.png',
+                alt: 'App introduction image',
+                title: (
+                  <div className='flex flex-col items-center space-y-10'>
+                    <h2 className='text-6xl font-bold text-emerald-700 text-center'>
+                      Welcome to the Perkd Product Sync App
+                    </h2>
+                    <h3 className='text-2xl font-medium text-emerald-800 text-center'>
+                      Set-up shop once, sell anywhere
+                    </h3>
+                  </div>
+                ),
+                content: (
+                  <div className='flex flex-col space-y-10 text-emerald-800'>
+                    <p className='font-medium'>
+                      Let us help you get to know the app so that you can start subscribing to 
+                      the stores you want and publishing to those that want you!
+                    </p>
+                    <p className='font-medium'>
+                      So, what are we waiting for?
+                    </p>
+                  </div>
+                ),
+                nextLabel: 'Let\'s get started',
+              },
+              {
+                src: 'https://via.placeholder.com/720x350.png',
+                alt: '',
+                title: (
+                  <div className='flex flex-col items-center space-y-10'>
+                    <h2 className='text-3xl font-semibold text-amber-600 text-center'>
+                      Let others see your store
+                    </h2>
+                  </div>
+                ),
+                content: (
+                  <div className='flex flex-col space-y-10 text-emerald-800'>
+                    <p className='font-medium'>
+                      Let us help you get to know the app so that you can start subscribing to 
+                      the stores you want and publishing to those that want you!
+                    </p>
+                    <p className='font-medium'>
+                      So, what are we waiting for?
+                    </p>
+                  </div>
+                ),
+                nextLabel: 'Continue',
+                jump: {
+                  page: 4,
+                  label: 'Skip to subscribing'
+                }
+              },
+              {
+                src: 'https://via.placeholder.com/720x350.png',
+                alt: '',
+                title: 'Test 3',
+                content: 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Repellat, magni!',
+                nextLabel: 'Continue'
+              },
+              {
+                src: 'https://via.placeholder.com/720x350.png',
+                alt: '',
+                title: 'Test 4',
+                content: 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Repellat, magni! Lorem ipsum dolor sit amet consectetur, adipisicing elit. Repellat, magni!',
+                exitLabel: 'Finish'
+              },
+            ]} />
+      : <Page
+          title="Store Product Sync"
+          fullWidth={true}>
+          <div className="grid grid-cols-1 gap-10 mb-20">
+            <Section
+              sectionTitle="Publish"
+              sectionDescription="See which stores are subscribed to you." >
 
-            <StorePublishingCard
-              activated={!isPublishActive}
-              primary={isPublishActive
-                && {
-                    content: "Link",
-                    onAction: openCalloutCardModal, 
-                    primary: true,   
-                  }}
-              onActivate={{
-                title: <>Store Publishing <span className="text-red-600">(Disabled)</span></>,
-                buttonTitle: "Options",
-                content: "Allow others to find and subscribe to your store.",
-                sections: [{
-                  title: 'Publish options',
-                  items: [
-                    {
-                      content: 'Activate', 
-                      active: true,
-                      icon: TickMinor,
-                      onAction: handlePublish
-                    },
-                  ],
-                }],
-              }}
-              onDeactivate={
-                publishedTo.length > 0
-                ? {
-                  title: <>Store Publishing <span className={isPublishPaused ? 'text-cyan-600': 'text-green-600'}>
-                    ({isPublishPaused ? 'Paused' : 'Active'})
-                    </span></>,
+              <StorePublishingCard
+                activated={!isPublishActive}
+                primary={isPublishActive
+                  && {
+                      content: "Link",
+                      onAction: openCalloutCardModal, 
+                      primary: true,   
+                    }}
+                onActivate={{
+                  title: <>Store Publishing <span className="text-red-600">(Disabled)</span></>,
                   buttonTitle: "Options",
-                  content: "Share your store with others, pause publishing or disconnect all stores currently subscribed to you.",
+                  content: "Allow others to find and subscribe to your store.",
                   sections: [{
                     title: 'Publish options',
                     items: [
                       {
-                        content: isPublishPaused
-                          ? 'Resume' 
-                          : 'Pause',
-                        active: isPublishPaused,
-                        icon: isPublishPaused 
-                          ? PlayMinor
-                          : PauseMinor,
-                        onAction: handlePause
-                      },
-                      {
-                        destructive: true,
-                        content: 'Disconnect All',
-                        icon: CancelSmallMinor,
-                        onAction: openDisconnectAllModal
+                        content: 'Activate', 
+                        active: true,
+                        icon: TickMinor,
+                        onAction: handlePublish
                       },
                     ],
                   }],
-                }
-              : {
-                title: <>Store Publishing <span className="text-green-600">(Active)</span></>,
-                buttonTitle: "Options",
-                content: "Share your store with others or disable publishing.",
-                sections: [{
-                  title: 'Publish options',
-                  items: [
-                    {
-                      destructive: true,
-                      content: 'Disable',
-                      icon: CancelSmallMinor,
-                      onAction: openDeactivatePublishModal
-                    },
-                  ],
-                }],
+                }}
+                onDeactivate={
+                  publishedTo.length > 0
+                  ? {
+                    title: <>Store Publishing <span className={isPublishPaused ? 'text-cyan-600': 'text-green-600'}>
+                      ({isPublishPaused ? 'Paused' : 'Active'})
+                      </span></>,
+                    buttonTitle: "Options",
+                    content: "Share your store with others, pause publishing or disconnect all stores currently subscribed to you.",
+                    sections: [{
+                      title: 'Publish options',
+                      items: [
+                        {
+                          content: isPublishPaused
+                            ? 'Resume' 
+                            : 'Pause',
+                          active: isPublishPaused,
+                          icon: isPublishPaused 
+                            ? PlayMinor
+                            : PauseMinor,
+                          onAction: handlePause
+                        },
+                        {
+                          destructive: true,
+                          content: 'Disconnect All',
+                          icon: CancelSmallMinor,
+                          onAction: openDisconnectAllModal
+                        },
+                      ],
+                    }],
+                  }
+                : {
+                  title: <>Store Publishing <span className="text-green-600">(Active)</span></>,
+                  buttonTitle: "Options",
+                  content: "Share your store with others or disable publishing.",
+                  sections: [{
+                    title: 'Publish options',
+                    items: [
+                      {
+                        destructive: true,
+                        content: 'Disable',
+                        icon: CancelSmallMinor,
+                        onAction: openDeactivatePublishModal
+                      },
+                    ],
+                  }],
+                  }} />
+
+              { isPublishActive && 
+                <List
+                  list={publishedTo}
+                  listText={{
+                    title: isPublishPaused 
+                      ? <>Subscribers <span className="text-cyan-600">(Paused)</span></>
+                      : "Subscribers",
+                    description: "You can connect, disconnect and track subscriptions to your store.",
+                  }}
+                  emptyListText={{
+                    title: "No subscribers yet",
+                    description: "Track user subscriptions to your store."
+                  }} 
+                  renderItem={(item) => { 
+                    return (
+                      <ResourceItem
+                        id={item.id}
+                        onClick={() => {}}>
+                        <Item
+                          item={item} 
+                          loading={{
+                            isLoading: false, //!isLoading,
+                            accessibilityLabel: "Sending request",
+                          }}
+                          badges={[
+                            {
+                              status: "pending",
+                              tooltip: "Waiting for publisher confirmation",
+                              statusStyle: "new",
+                            },
+                            {
+                              status: "active",
+                              displayStatus: isPublishPaused ? "paused" : "active",
+                              tooltip: isPublishPaused ? "Publishing is currently paused" : "There is an active subscription",
+                              statusStyle: isPublishPaused ? "info" : "success",
+                            },
+                            {
+                              status: "stopped",
+                              tooltip: "The publisher has stopped the connection",
+                              statusStyle: "critical",
+                            },
+                            {
+                              status: "declined",
+                              tooltip: "The publisher has declined your subscription request",
+                              statusStyle: "warning",
+                            }
+                          ]}
+                          options={[
+                            {
+                              content: 'Connect',
+                              helpText: "Accept subscription to your store",
+                              icon: TickMinor,
+                              onAction: () => onPublishConnect(item),
+                              active: true,
+                            },
+                            {
+                              content: 'Disconnect',
+                              helpText: "Deny subscription to your store",
+                              icon: CancelSmallMinor,
+                              onAction: () => onPublishDisconnect(item),
+                              destructive: true,
+                            },
+                          ]} />
+                        </ResourceItem> 
+                      )
+                  }}/> }
+
+              {hasError && <Toast content={errorMessage} error onDismiss={toggleHasError} /> }
+
+              <Modal
+                title="Disconnect All Subscriptions and Disable Publishing"
+                content="All current subscriptions to your store will be disconnected 
+                  and publishing will be disabled. Do you wish to continue?" 
+                isModalOpen={showDisconnectAllModal}
+                modalHandler={setShowDisconnectAllModal} 
+                primaryAction={{
+                  actionText: "Disconnect All",
+                  actionHandler: handleDisconnectAllModal,
+                  destructive: true
+                }}
+                secondaryActions={[
+                  {
+                    actionText: "Cancel",
+                    actionHandler: closeDisconnectAllModal,
+                  },
+                ]}
+                toast={{
+                  content: "Subscriptions Disconnected"
                 }} />
 
-            { isPublishActive && 
+              <Modal
+                title="Disable Publishing"
+                content="Disabling this setting will stop others from finding your 
+                  store. Do you wish to continue?" 
+                isModalOpen={showDeactivatePublishModal}
+                modalHandler={setShowDeactivatePublishModal} 
+                primaryAction={{
+                  actionText: "Disable",
+                  actionHandler: handleDeactivatePublishModal,
+                  destructive: true
+                }}
+                secondaryActions={[
+                  {
+                    actionText: "Cancel",
+                    actionHandler: closeDeactivatePublishModal,
+                  },
+                ]}
+                toast={{
+                  content: "Publishing Disabled"
+                }} />
+
+              <Modal
+                title="Get your store link"
+                content={
+                  <p>
+                    Your store link is <TextStyle variation="code">{user}</TextStyle>. 
+                    Share it with others so that they can find and subscribe to your store.
+                  </p>
+                }
+                isModalOpen={showCalloutCardModal}
+                modalHandler={setShowCalloutCardModal} 
+                primaryAction={{
+                  actionText: "Continue",
+                  actionHandler: (e) => {
+                    setShowCalloutCardModal(false)
+                  },
+                }} />
+              
+            </Section>
+
+            <Section
+              sectionTitle="Subscribe"
+              sectionDescription="Subscribe to a published store and check on pending subscriptions." >
+
               <List
-                list={publishedTo}
+                list={subscribedTo}
                 listText={{
-                  title: isPublishPaused 
-                    ? <>Subscribers <span className="text-cyan-600">(Paused)</span></>
-                    : "Subscribers",
-                  description: "You can connect, disconnect and track subscriptions to your store.",
+                  title: "Subscriptions",
+                  description: "A list of all of your subscriptions to other stores.",
                 }}
                 emptyListText={{
-                  title: "No subscribers yet",
-                  description: "Track user subscriptions to your store."
-                }} 
+                  title: "No subscriptions yet",
+                  description: "Track your subscriptions from stores."
+                }}
+                primaryAction={{
+                  content: "New Subscription",
+                  onAction: () => setShowAddToListModal(true),
+                }}
                 renderItem={(item) => { 
                   return (
                     <ResourceItem
                       id={item.id}
                       onClick={() => {}}>
-                      <Item
-                        item={item} 
-                        loading={{
-                          isLoading: !isLoading,
-                          accessibilityLabel: "Sending request",
-                        }}
-                        badges={[
-                          {
-                            status: "pending",
-                            tooltip: "Waiting for publisher confirmation",
-                            statusStyle: "new",
-                          },
-                          {
-                            status: "active",
-                            displayStatus: isPublishPaused ? "paused" : "active",
-                            tooltip: isPublishPaused ? "Publishing is currently paused" : "There is an active subscription",
-                            statusStyle: isPublishPaused ? "info" : "success",
-                          },
-                          {
-                            status: "stopped",
-                            tooltip: "The publisher has stopped the connection",
-                            statusStyle: "critical",
-                          },
-                          {
-                            status: "declined",
-                            tooltip: "The publisher has declined your subscription request",
-                            statusStyle: "warning",
-                          }
-                        ]}
-                        options={[
-                          {
-                            content: 'Connect',
-                            helpText: "Accept subscription to your store",
-                            icon: TickMinor,
-                            onAction: () => onPublishConnect(item),
-                            active: true,
-                          },
-                          {
-                            content: 'Disconnect',
-                            helpText: "Deny subscription to your store",
-                            icon: CancelSmallMinor,
-                            onAction: () => onPublishDisconnect(item),
-                            destructive: true,
-                          },
-                        ]} />
-                      </ResourceItem> 
+                        <Item
+                          item={item} 
+                          loading={{
+                            isLoading: itemIsLoading,
+                            accessibilityLabel: "Sending request",
+                          }}
+                          badges={[
+                            {
+                              status: "pending",
+                              tooltip: "Waiting for publisher confirmation",
+                              statusStyle: "new",
+                            },
+                            {
+                              status: "active",
+                              tooltip: "There is an active subscription",
+                              statusStyle: "success",
+                            },
+                            {
+                              status: "stopped",
+                              tooltip: "The publisher has stopped the connection",
+                              statusStyle: "critical",
+                            },
+                            {
+                              status: "declined",
+                              tooltip: "The publisher has declined your subscription request",
+                              statusStyle: "warning",
+                            },
+                          ]}
+                          options={[
+                            {
+                              content: 'Disconnect',
+                              helpText: "Deny subscription to your store",
+                              icon: CancelSmallMinor,
+                              onAction: () => onSubscribeDisconnect(item),
+                              destructive: true,
+                            },
+                          ]} />
+                      </ResourceItem>
                     )
-                }}/> }
-
-            {hasError && <Toast content={errorMessage} error onDismiss={toggleHasError} /> }
-
-            <Modal
-              title="Disconnect All Subscriptions and Disable Publishing"
-              content="All current subscriptions to your store will be disconnected 
-                and publishing will be disabled. Do you wish to continue?" 
-              isModalOpen={showDisconnectAllModal}
-              modalHandler={setShowDisconnectAllModal} 
-              primaryAction={{
-                actionText: "Disconnect All",
-                actionHandler: handleDisconnectAllModal,
-                destructive: true
-              }}
-              secondaryActions={[
-                {
-                  actionText: "Cancel",
-                  actionHandler: closeDisconnectAllModal,
-                },
-              ]}
-              toast={{
-                content: "Subscriptions Disconnected"
-              }} />
-
-            <Modal
-              title="Disable Publishing"
-              content="Disabling this setting will stop others from finding your 
-                store. Do you wish to continue?" 
-              isModalOpen={showDeactivatePublishModal}
-              modalHandler={setShowDeactivatePublishModal} 
-              primaryAction={{
-                actionText: "Disable",
-                actionHandler: handleDeactivatePublishModal,
-                destructive: true
-              }}
-              secondaryActions={[
-                {
-                  actionText: "Cancel",
-                  actionHandler: closeDeactivatePublishModal,
-                },
-              ]}
-              toast={{
-                content: "Publishing Disabled"
-              }} />
-
-            <Modal
-              title="Get your store link"
-              content={
-                <p>
-                  Your store link is <TextStyle variation="code">{user}</TextStyle>. 
-                  Share it with others so that they can find and subscribe to your store.
-                </p>
-              }
-              isModalOpen={showCalloutCardModal}
-              modalHandler={setShowCalloutCardModal} 
-              primaryAction={{
-                actionText: "Continue",
-                actionHandler: (e) => {
-                  setShowCalloutCardModal(false)
-                },
-              }} />
-            
-          </Section>
-
-          <Section
-            sectionTitle="Subscribe"
-            sectionDescription="Subscribe to a published store and check on pending subscriptions." >
-
-            <List
-              list={subscribedTo}
-              listText={{
-                title: "Subscriptions",
-                description: "A list of all of your subscriptions to other stores.",
-              }}
-              emptyListText={{
-                title: "No subscriptions yet",
-                description: "Track your subscriptions from stores."
-              }}
-              primaryAction={{
-                content: "New Subscription",
-                onAction: () => setShowAddToListModal(true),
-              }}
-              renderItem={(item) => { 
-                return (
-                  <ResourceItem
-                    id={item.id}
-                    onClick={() => {}}>
-                      <Item
-                        item={item} 
-                        loading={{
-                          isLoading: itemIsLoading,
-                          accessibilityLabel: "Sending request",
-                        }}
-                        badges={[
-                          {
-                            status: "pending",
-                            tooltip: "Waiting for publisher confirmation",
-                            statusStyle: "new",
-                          },
-                          {
-                            status: "active",
-                            tooltip: "There is an active subscription",
-                            statusStyle: "success",
-                          },
-                          {
-                            status: "stopped",
-                            tooltip: "The publisher has stopped the connection",
-                            statusStyle: "critical",
-                          },
-                          {
-                            status: "declined",
-                            tooltip: "The publisher has declined your subscription request",
-                            statusStyle: "warning",
-                          },
-                        ]}
-                        options={[
-                          {
-                            content: 'Disconnect',
-                            helpText: "Deny subscription to your store",
-                            icon: CancelSmallMinor,
-                            onAction: () => onSubscribeDisconnect(item),
-                            destructive: true,
-                          },
-                        ]} />
-                    </ResourceItem>
-                  )
-              }} />
-
-              <Modal
-              title="Subscribe to a new store"
-              content="You can add the store subscription link here to subscribe to that
-                store and recieve product updates from them."
-              isModalOpen={showAddToListModal}
-              modalHandler={setShowAddToListModal}
-              primaryAction={{
-                actionText: "Subscribe",
-                actionHandler: (e) => addToSubscribedToListHandler(e)
-              }}
-              inputAction={{
-                id: "modalInput",
-                label: "Store Subscription Link",
-                placeholder: "Example: store.myshopify.com",
-                errorMessage: "Invalid input",
-                errorHandler: (input) => {
-                  const storeURLPattern = /(\w+-)*\w+(.myshopify.com)/
-                  if(!input) return true
-                  return !storeURLPattern.test(input)
-                }
-              }}
-              toast={{
-                content: "Request Sent",
-              }} />
-
-            {/* <ModalWithForm
-              title="Subscribe to a new store"
-              content="You can add the store subscription link here to subscribe to that
-                store and recieve product updates from them."
-              isModalOpen={showAddToListModal}
-              modalHandler={setShowAddToListModal}
-              primaryAction={{
-                actionText: "Subscribe",
-                actionHandler: (e) => addToSubscribedToListHandler(e)
-              }}
-              inputAction={{
-                id: "modalInput",
-                label: "Store Link",
-                placeholder: "Example: store.myshopify.com",
-                errorMessage: "Invalid input",
-                errorHandler: (input) => {
-                  const storeURLPattern = /(\w+-)*\w+(.myshopify.com)/
-                  if(!input) return true
-                  return !storeURLPattern.test(input)
-                }
-              }}
-              toast={{
-                content: "Request Sent",
-              }}
-              onFormSubmit={{
-                actionHandler: (store: {
-                  url: string,
-                  id: string,
-                }) => {
-                  const {
-                    url,
-                    id,
-                  } = store
-              
-                  const storeID = id
-                  
-                  setSubscribe({
-                    origin: user,
-                    subscriberShop: url,
-                    id: storeID,
-                  })
-                  .then(({
-                    shop,
-                    inventoryLocationId,
-                    status,
-                    code, 
+                }} />
+                
+              <ModalWithForm
+                title="Subscribe to a new store"
+                content="You can add the store subscription link here to subscribe to that
+                  store and recieve product updates from them."
+                isModalOpen={showAddToListModal}
+                modalHandler={setShowAddToListModal}
+                primaryAction={{
+                  actionText: "Subscribe",
+                  actionHandler: (e) => addToSubscribedToListHandler(e)
+                }}
+                secondaryActions={[
+                  {
+                    actionText: "Cancel",
+                    actionHandler: () => setShowAddToListModal(false),
+                  },
+                ]}
+                inputAction={{
+                  id: "modalInput",
+                  label: "Store Link",
+                  placeholder: "Example: store.myshopify.com",
+                  errorMessage: "Invalid input",
+                  errorHandler: (input) => {
+                    const storeURLPattern = /(\w+-)*\w+(.myshopify.com)/
+                    if(!input) return true
+                    return !storeURLPattern.test(input)
+                  }
+                }}
+                toast={{
+                  content: "Request Sent",
+                }}
+                onFormSubmit={{
+                  actionHandler: (store: {
+                    url: string,
+                    id: string,
                   }) => {
-                    if(code) {
-                      setErrorMessage(errorCodeToMessage(code))
-                      setHasError(true)
-                    } else {
-                      setSubscribedTo([
-                        ...subscribedTo,
-                        {
-                          storeURL: shop,
-                          id: inventoryLocationId,
-                          status: status,
-                        }
-                      ])
-                    } 
-                  })
-                }
-              }} /> */}
+                    const {
+                      url,
+                      id,
+                    } = store
+                
+                    const storeID = id
+                    
+                    setSubscribe({
+                      origin: user,
+                      subscriberShop: url,
+                      id: storeID,
+                    })
+                    .then(({
+                      shop,
+                      inventoryLocationId,
+                      status,
+                      code, 
+                    }) => {
+                      if(code) {
+                        setErrorMessage(errorCodeToMessage(code))
+                        setHasError(true)
+                      } else {
+                        setSubscribedTo([
+                          ...subscribedTo,
+                          {
+                            storeURL: shop,
+                            id: inventoryLocationId,
+                            status: status,
+                          }
+                        ])
+                      } 
+                    })
+                  }
+                }} />
 
-          </Section>
-        </div>
-      </Page>
+            </Section>
+          </div>
+        </Page>}
     </Frame>
   )
 }
