@@ -295,14 +295,16 @@ const App: FC<IAppProps> = ({
 
   return (
     <Frame>
-      { postInstall
+      { !postInstall
       ? <SetUpInstructions 
           onFinish={() => setPostInstall(false)}
           pages={
             [
               {
-                src: 'https://via.placeholder.com/720x350.png',
-                alt: 'App introduction image',
+                img: {
+                  src: 'https://via.placeholder.com/720x250.png',
+                  alt: 'App introduction image',
+                },
                 title: (
                   <div className='flex flex-col items-center space-y-10'>
                     <h2 className='text-6xl font-bold text-emerald-700 text-center'>
@@ -327,24 +329,37 @@ const App: FC<IAppProps> = ({
                 nextLabel: 'Let\'s get started',
               },
               {
-                src: 'https://via.placeholder.com/720x350.png',
-                alt: '',
+                img: {
+                  src: 'https://via.placeholder.com/720x250.png',
+                  alt: 'App introduction image',
+                },
                 title: (
                   <div className='flex flex-col items-center space-y-10'>
                     <h2 className='text-3xl font-semibold text-amber-600 text-center'>
-                      Let others see your store
+                      Publishing your store
                     </h2>
                   </div>
                 ),
                 content: (
                   <div className='flex flex-col space-y-10 text-emerald-800'>
                     <p className='font-medium'>
-                      Let us help you get to know the app so that you can start subscribing to 
-                      the stores you want and publishing to those that want you!
+                      Allow others to find and subscribe to your store by enabling the <span className='text-amber-600'>Publishing</span> setting. 
+                      This setting can be disabled at any time if you no longer want to publish your store. 
                     </p>
-                    <p className='font-medium'>
-                      So, what are we waiting for?
-                    </p>
+                    <Polaris.List type='number'>
+                      <Polaris.List.Item>
+                        Navigate to the <span className='font-semibold'>Publish</span> section of the app.
+                      </Polaris.List.Item>
+                      <Polaris.List.Item>
+                        Go to the <span className='font-semibold'>Store Publishing</span> card.
+                      </Polaris.List.Item>
+                      <Polaris.List.Item>
+                        Click on the <span className='font-semibold'>Options</span> button.
+                      </Polaris.List.Item>
+                      <Polaris.List.Item>
+                        Click on <span className='font-semibold'>Activate</span>.
+                      </Polaris.List.Item>
+                    </Polaris.List>
                   </div>
                 ),
                 nextLabel: 'Continue',
@@ -354,15 +369,19 @@ const App: FC<IAppProps> = ({
                 }
               },
               {
-                src: 'https://via.placeholder.com/720x350.png',
-                alt: '',
+                img: {
+                  src: 'https://via.placeholder.com/720x250.png',
+                  alt: 'App introduction image',
+                },
                 title: 'Test 3',
                 content: 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Repellat, magni!',
                 nextLabel: 'Continue'
               },
               {
-                src: 'https://via.placeholder.com/720x350.png',
-                alt: '',
+                img: {
+                  src: 'https://via.placeholder.com/720x250.png',
+                  alt: 'App introduction image',
+                },
                 title: 'Test 4',
                 content: 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Repellat, magni! Lorem ipsum dolor sit amet consectetur, adipisicing elit. Repellat, magni!',
                 exitLabel: 'Finish'
@@ -386,19 +405,13 @@ const App: FC<IAppProps> = ({
                     }}
                 onActivate={{
                   title: <>Store Publishing <span className="text-red-600">(Disabled)</span></>,
-                  buttonTitle: "Options",
+                  buttonTitle: "Activate",
                   content: "Allow others to find and subscribe to your store.",
-                  sections: [{
-                    title: 'Publish options',
-                    items: [
-                      {
-                        content: 'Activate', 
-                        active: true,
-                        icon: TickMinor,
-                        onAction: handlePublish
-                      },
-                    ],
-                  }],
+                  defaultButton: {
+                    content: 'Activate', 
+                    icon: TickMinor,
+                    onAction: handlePublish
+                  }
                 }}
                 onDeactivate={
                   publishedTo.length > 0

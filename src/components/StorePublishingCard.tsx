@@ -12,7 +12,8 @@ declare type ToggleState = {
   plain?: boolean,
   outline?: boolean,
   destructive?: boolean,
-  sections: polaris.ActionListSection[]
+  sections?: polaris.ActionListSection[],
+  defaultButton?: polaris.ComplexAction & polaris.ButtonProps,
 }
 
 interface IToggle {
@@ -46,16 +47,17 @@ const StorePublishingCard: FC<IStorePublishingCard> = ({
     outline,
     destructive,
     sections,
+    defaultButton,
   } = state
 
   const activator = (
-  <Button 
-    destructive={destructive} 
-    outline={outline}
-    plain={plain}
-    onClick={toggleOptionsActive}>
-      {buttonTitle}
-  </Button>
+    <Button 
+      destructive={destructive} 
+      outline={outline}
+      plain={plain}
+      onClick={toggleOptionsActive}>
+        {buttonTitle}
+    </Button>
   );
 
   const style = contentStyle as Variation
@@ -82,12 +84,23 @@ const StorePublishingCard: FC<IStorePublishingCard> = ({
               onClick={primary.onAction}>
                 {primary.content}
             </Button> }
-          <Popover
-            active={optionsActive}
-            activator={activator}
-            onClose={toggleOptionsActive} >
-            <ActionList sections={sections} />
-          </Popover>
+          { defaultButton
+            ? <Button 
+                primary
+                destructive={defaultButton.destructive}
+                outline={defaultButton.outline} 
+                icon={defaultButton.icon} 
+                plain={defaultButton.plain}
+                onClick={defaultButton.onAction}>
+                  {defaultButton.content}
+              </Button>
+            : <Popover
+                active={optionsActive}
+                activator={activator}
+                onClose={toggleOptionsActive} >
+                <ActionList sections={sections} />
+              </Popover>
+             }
         </div>
       </div>
     </Card>
