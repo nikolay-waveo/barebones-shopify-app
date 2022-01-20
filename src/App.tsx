@@ -1,5 +1,5 @@
 import * as Polaris from '@shopify/polaris';
-import { Frame, Page, ResourceItem, TextStyle, Toast } from '@shopify/polaris';
+import { Badge, Frame, Page, ResourceItem, TextStyle, Toast } from '@shopify/polaris';
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import {
   CancelSmallMinor,
@@ -17,6 +17,7 @@ import { usePublish } from './hooks/usePublish';
 import { useSettings } from './hooks/useSettings';
 import { useSubscribe } from './hooks/useSubscribe';
 import SetUpInstructions from './components/SetUpInstructions';
+import SetUpSection from './components/SetUpSection';
 
 type TSubscription = {
   subscription: {
@@ -295,98 +296,8 @@ const App: FC<IAppProps> = ({
 
   return (
     <Frame>
-      { !postInstall
-      ? <SetUpInstructions 
-          onFinish={() => setPostInstall(false)}
-          pages={
-            [
-              {
-                img: {
-                  src: 'https://via.placeholder.com/720x250.png',
-                  alt: 'App introduction image',
-                },
-                title: (
-                  <div className='flex flex-col items-center space-y-10'>
-                    <h2 className='text-6xl font-bold text-emerald-700 text-center'>
-                      Welcome to the Perkd Product Sync App
-                    </h2>
-                    <h3 className='text-2xl font-medium text-emerald-800 text-center'>
-                      Set-up shop once, sell anywhere
-                    </h3>
-                  </div>
-                ),
-                content: (
-                  <div className='flex flex-col space-y-10 text-emerald-800'>
-                    <p className='font-medium'>
-                      Let us help you get to know the app so that you can start subscribing to 
-                      the stores you want and publishing to those that want you!
-                    </p>
-                    <p className='font-medium'>
-                      So, what are we waiting for?
-                    </p>
-                  </div>
-                ),
-                nextLabel: 'Let\'s get started',
-              },
-              {
-                img: {
-                  src: 'https://via.placeholder.com/720x250.png',
-                  alt: 'App introduction image',
-                },
-                title: (
-                  <div className='flex flex-col items-center space-y-10'>
-                    <h2 className='text-3xl font-semibold text-amber-600 text-center'>
-                      Publishing your store
-                    </h2>
-                  </div>
-                ),
-                content: (
-                  <div className='flex flex-col space-y-10 text-emerald-800'>
-                    <p className='font-medium'>
-                      Allow others to find and subscribe to your store by enabling the <span className='text-amber-600'>Publishing</span> setting. 
-                      This setting can be disabled at any time if you no longer want to publish your store. 
-                    </p>
-                    <Polaris.List type='number'>
-                      <Polaris.List.Item>
-                        Navigate to the <span className='font-semibold'>Publish</span> section of the app.
-                      </Polaris.List.Item>
-                      <Polaris.List.Item>
-                        Go to the <span className='font-semibold'>Store Publishing</span> card.
-                      </Polaris.List.Item>
-                      <Polaris.List.Item>
-                        Click on the <span className='font-semibold'>Options</span> button.
-                      </Polaris.List.Item>
-                      <Polaris.List.Item>
-                        Click on <span className='font-semibold'>Activate</span>.
-                      </Polaris.List.Item>
-                    </Polaris.List>
-                  </div>
-                ),
-                nextLabel: 'Continue',
-                jump: {
-                  page: 4,
-                  label: 'Skip to subscribing'
-                }
-              },
-              {
-                img: {
-                  src: 'https://via.placeholder.com/720x250.png',
-                  alt: 'App introduction image',
-                },
-                title: 'Test 3',
-                content: 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Repellat, magni!',
-                nextLabel: 'Continue'
-              },
-              {
-                img: {
-                  src: 'https://via.placeholder.com/720x250.png',
-                  alt: 'App introduction image',
-                },
-                title: 'Test 4',
-                content: 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Repellat, magni! Lorem ipsum dolor sit amet consectetur, adipisicing elit. Repellat, magni!',
-                exitLabel: 'Finish'
-              },
-            ]} />
+      { postInstall
+      ? <SetUpSection onFinish={() => setPostInstall(false)} />
       : <Page
           title="Store Product Sync"
           fullWidth={true}>
