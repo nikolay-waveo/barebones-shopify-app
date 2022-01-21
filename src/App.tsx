@@ -1,5 +1,5 @@
-import * as Polaris from '@shopify/polaris';
-import { Badge, Frame, Page, ResourceItem, TextStyle, Toast } from '@shopify/polaris';
+
+import { Frame, Page, ResourceItem, TextStyle, Toast } from '@shopify/polaris';
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import {
   CancelSmallMinor,
@@ -14,9 +14,9 @@ import Section from './components/Section';
 import SetUpSection from './components/SetUpSection';
 import ModalWithForm from './components/ModalWithForm';
 import StorePublishingCard from './components/StorePublishingCard';
-import { usePublish } from './hooks/usePublish';
-import { useSettings } from './hooks/useSettings';
 import { useSubscribe } from './hooks/useSubscribe';
+import { usePublisher } from './hooks/usePublisher';
+import { useSubscriber } from './hooks/useSubscriber';
 
 type TSubscription = {
   subscription: {
@@ -54,21 +54,28 @@ const App: FC<IAppProps> = ({
   const renderCount = useRef(0)
 
   const {
-    useGETShopSettings: getSettings, 
-    useSETShopSettings: setSettings
-  } = useSettings()
+    useDisplayPublisher,
+    useUpdatePublishStatus,
+    useUpdateSubscriber,
+    useRemoveSubscriber,
+  } = usePublisher();
 
   const {
-    useSETShopPublishSettings: setPublish,
-    useDELETEShopPublishSettings: deletePublish,
-  } = usePublish()
+    data,
+    isLoading,
+    isError
+  } = useDisplayPublisher({ origin: user })
+
+  const {
+    useRetrieveLocation,
+    useUpdateSubscription,
+    useRemoveSubscription,
+  } = useSubscriber();
 
   const {
     useSETShopSubscribeSettings: setSubscribe,
     useDELETEShopSubscribeSettings: deleteSubscribe
   } = useSubscribe()
-
-  const {data, isLoading, isError} = getSettings(user)
 
   useEffect(() => {
     // GET incoming and outgoing subscriptions
@@ -177,9 +184,9 @@ const App: FC<IAppProps> = ({
   }
 
   const onPublishConnect = (store: TSubscription['subscription']) => {
-    setPublish({
+    useUpdateSubscriber({
       origin: user,
-      publisherShop: store.storeURL,
+      shop: store.storeURL,
       accept: true,
     })
     .then((_): void => {
@@ -190,9 +197,9 @@ const App: FC<IAppProps> = ({
 
   const onPublishDisconnect = (store: TSubscription['subscription']) => {
     if(store.status === "active") {
-      deletePublish({
-        origin: user,
-        publisherShop: store.storeURL,
+      useRemoveSubscriber({
+        origin: user, 
+        shop: store.storeURL
       })
       .then((_): void => {
         const newList = publishedTo.filter((item) => item.storeURL !== store.storeURL);
@@ -200,9 +207,9 @@ const App: FC<IAppProps> = ({
       })
     }
     else {
-      setPublish({
+      useUpdateSubscriber({
         origin: user,
-        publisherShop: store.storeURL,
+        shop: store.storeURL,
         accept: false,
       })
       .then((_): void => {
@@ -217,7 +224,6 @@ const App: FC<IAppProps> = ({
       origin: user,
       subscriberShop: store.storeURL
     })
-    .then(r => console.log('onSubDis', r))
     .then(_ => {
       const newList = subscribedTo.filter((item) => item.storeURL !== store.storeURL);
       setSubscribedTo(newList);
@@ -245,20 +251,22 @@ const App: FC<IAppProps> = ({
     if (isPublishActive) {
       openDeactivatePublishModal()
     } else {
-      setSettings(user, {
+      useUpdatePublishStatus({
+        origin: user,
         publish: !publishMode
       })
       .then(({
-        publish
-      }): void => {
-        setIsPublishActive(publish)
-        setIsPublishPaused(!publish)
-      })
+          publish
+        }): void => {
+          setIsPublishActive(publish)
+          setIsPublishPaused(!publish)
+        })
     }
   }, [isPublishActive, user, publishMode])
 
   const handleDeactivatePublishModal = useCallback(() => {
-    setSettings(user, {
+    useUpdatePublishStatus({
+      origin: user,
       publish: false
     })
     .then((_): void => {
@@ -270,7 +278,8 @@ const App: FC<IAppProps> = ({
 
   const handleDisconnectAllModal = useCallback(() => {
     handleDisconnectAll()
-    setSettings(user, {
+    useUpdatePublishStatus({
+      origin: user,
       publish: false
     })
     .then((_): void => {
@@ -281,7 +290,8 @@ const App: FC<IAppProps> = ({
   }, [])
   
   const handlePause = useCallback(() => {
-    setSettings(user, {
+    useUpdatePublishStatus({
+      origin: user,
       publish: isPublishPaused
     })
     .then(({
