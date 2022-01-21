@@ -11,13 +11,12 @@ import Item from './components/Item';
 import List from './components/List';
 import Modal from './components/Modal';
 import Section from './components/Section';
+import SetUpSection from './components/SetUpSection';
 import ModalWithForm from './components/ModalWithForm';
 import StorePublishingCard from './components/StorePublishingCard';
 import { usePublish } from './hooks/usePublish';
 import { useSettings } from './hooks/useSettings';
 import { useSubscribe } from './hooks/useSubscribe';
-import SetUpInstructions from './components/SetUpInstructions';
-import SetUpSection from './components/SetUpSection';
 
 type TSubscription = {
   subscription: {
@@ -29,14 +28,16 @@ type TSubscription = {
 
 interface IAppProps {
   shopOrigin: string,
+  installed: boolean,
 }
 
 const App: FC<IAppProps> = ({
   shopOrigin,
+  installed,
 }) => {
 
   const [user] = useState(shopOrigin)
-  const [postInstall, setPostInstall] = useState(true)
+  const [postInstall, setPostInstall] = useState(installed)
   const [publishedTo, setPublishedTo] = useState<TSubscription['subscription'][]>([]);
   const [subscribedTo, setSubscribedTo] = useState<TSubscription['subscription'][]>([]);
   const [publishMode, setPublishMode] = useState(false)
@@ -67,46 +68,46 @@ const App: FC<IAppProps> = ({
     useDELETEShopSubscribeSettings: deleteSubscribe
   } = useSubscribe()
 
-  // const {data, isLoading} = getSettings(user)
+  const {data, isLoading, isError} = getSettings(user)
 
-  // useEffect(() => {
-  //   // GET incoming and outgoing subscriptions
-  //   if(!isLoading) {
-  //     const publishedToData = data
-  //     .published?.map(({
-  //       shop,
-  //       inventoryLocationId,
-  //       status,
-  //     }) => {
-  //       return ({
-  //         storeURL: shop,
-  //         id: inventoryLocationId,
-  //         status: status,
-  //       })
-  //     }) || []
-  //     setPublishedTo(publishedToData)
+  useEffect(() => {
+    // GET incoming and outgoing subscriptions
+    if(!isLoading && !isError) {
+      const publishedToData = data
+      .published?.map(({
+        shop,
+        inventoryLocationId,
+        status,
+      }) => {
+        return ({
+          storeURL: shop,
+          id: inventoryLocationId,
+          status: status,
+        })
+      }) || []
+      setPublishedTo(publishedToData)
 
-  //     const subscribedToData = data
-  //     .subscribed?.map(({
-  //       shop,
-  //       inventoryLocationId,
-  //       status,
-  //     }) => {
-  //       return ({
-  //         storeURL: shop,
-  //         id: inventoryLocationId,
-  //         status: status,
-  //       })
-  //     }) || []
-  //     setSubscribedTo(subscribedToData) 
-  //     setPublishMode(data.publish)
+      const subscribedToData = data
+      .subscribed?.map(({
+        shop,
+        inventoryLocationId,
+        status,
+      }) => {
+        return ({
+          storeURL: shop,
+          id: inventoryLocationId,
+          status: status,
+        })
+      }) || []
+      setSubscribedTo(subscribedToData) 
+      setPublishMode(data.publish)
 
-  //     if(renderCount.current <= 0) {
-  //       setIsPublishActive(data.publish)
-  //       renderCount.current = renderCount.current + 1;
-  //     }
-  //   }
-  // }, [data, isLoading, user])
+      if(renderCount.current <= 0) {
+        setIsPublishActive(data.publish)
+        renderCount.current = renderCount.current + 1;
+      }
+    }
+  }, [data, isLoading, user])
 
   const toggleHasError = useCallback(() => setHasError((hasError) => !hasError),[])
 
@@ -159,9 +160,7 @@ const App: FC<IAppProps> = ({
       status,
       code,
     }) => {
-      console.log('rrrr', code)
       if(code) {
-        console.log('test')
         setErrorMessage(errorCodeToMessage(code))
         setHasError(true)
       } else {
@@ -392,7 +391,7 @@ const App: FC<IAppProps> = ({
                         <Item
                           item={item} 
                           loading={{
-                            isLoading: false, //!isLoading,
+                            isLoading: !isLoading,
                             accessibilityLabel: "Sending request",
                           }}
                           badges={[
