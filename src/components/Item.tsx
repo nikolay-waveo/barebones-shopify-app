@@ -51,8 +51,6 @@ const Item: React.FC<IItem> = ({
 
   const badge = badges.find(badge => status === badge.status)
 
-  const capitalize = (string: string) => string.charAt(0).toUpperCase() + string.slice(1)
-
   return (
     <div className="grid grid-cols-9">
       <h3 className="col-span-7 truncate">
@@ -66,11 +64,13 @@ const Item: React.FC<IItem> = ({
           <Tooltip 
             content={badge.tooltip}
             preferredPosition='above' >
-              <Badge 
-                size="small"
-                {...{status: badge.statusStyle}} >
-                {capitalize(badge.displayStatus || status)}
-            </Badge>
+              <div className="capitalize">
+                <Badge 
+                  size="small"
+                  {...{status: badge.statusStyle}} >
+                  {badge.displayStatus || status}
+                </Badge>
+              </div>
           </Tooltip> }
       </div>
       <div className="grid justify-end col-start-9">
