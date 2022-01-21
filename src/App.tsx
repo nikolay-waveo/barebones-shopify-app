@@ -14,7 +14,6 @@ import Section from './components/Section';
 import SetUpSection from './components/SetUpSection';
 import ModalWithForm from './components/ModalWithForm';
 import StorePublishingCard from './components/StorePublishingCard';
-import { useSubscribe } from './hooks/useSubscribe';
 import { usePublisher } from './hooks/usePublisher';
 import { useSubscriber } from './hooks/useSubscriber';
 
@@ -61,21 +60,16 @@ const App: FC<IAppProps> = ({
   } = usePublisher();
 
   const {
-    data,
-    isLoading,
-    isError
-  } = useDisplayPublisher({ origin: user })
-
-  const {
     useRetrieveLocation,
     useUpdateSubscription,
     useRemoveSubscription,
   } = useSubscriber();
 
   const {
-    useSETShopSubscribeSettings: setSubscribe,
-    useDELETEShopSubscribeSettings: deleteSubscribe
-  } = useSubscribe()
+    data,
+    isLoading,
+    isError
+  } = useDisplayPublisher({ origin: user })
 
   useEffect(() => {
     // GET incoming and outgoing subscriptions
@@ -153,13 +147,20 @@ const App: FC<IAppProps> = ({
     onItemIsLoading(subscribedTo)
   }, [publishedTo, subscribedTo, itemIsLoading, onItemIsLoading])
 
+  const addToSubscribedToListHandler = (store: {
+    url: string,
+    id: string,
+  }) => {
 
-  const addToSubscribedToListHandler = (url: string) => {  
-    const storeID = "0"
-    setSubscribe({
+    const {
+      url,
+      id,
+    } = store
+
+    useUpdateSubscription({
       origin: user,
-      subscriberShop: url,
-      id: storeID,
+      shop: url,
+      id: id,
     })
     .then(({
       shop,
@@ -220,9 +221,9 @@ const App: FC<IAppProps> = ({
   }
 
   const onSubscribeDisconnect = (store: TSubscription['subscription']) => {
-    deleteSubscribe({
+    useRemoveSubscription({
       origin: user,
-      subscriberShop: store.storeURL
+      shop: store.storeURL
     })
     .then(_ => {
       const newList = subscribedTo.filter((item) => item.storeURL !== store.storeURL);
@@ -603,45 +604,6 @@ const App: FC<IAppProps> = ({
                 }}
                 toast={{
                   content: "Request Sent",
-                }}
-                onFormSubmit={{
-                  actionHandler: (store: {
-                    url: string,
-                    id: string,
-                  }) => {
-                    const {
-                      url,
-                      id,
-                    } = store
-                
-                    const storeID = id
-                    
-                    setSubscribe({
-                      origin: user,
-                      subscriberShop: url,
-                      id: storeID,
-                    })
-                    .then(({
-                      shop,
-                      inventoryLocationId,
-                      status,
-                      code, 
-                    }) => {
-                      if(code) {
-                        setErrorMessage(errorCodeToMessage(code))
-                        setHasError(true)
-                      } else {
-                        setSubscribedTo([
-                          ...subscribedTo,
-                          {
-                            storeURL: shop,
-                            id: inventoryLocationId,
-                            status: status,
-                          }
-                        ])
-                      } 
-                    })
-                  }
                 }} />
 
             </Section>
