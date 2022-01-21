@@ -29,7 +29,10 @@ interface IModal {
   }
   primaryAction: {
     actionText: string, 
-    actionHandler: (input: string) => void,
+    actionHandler: (input: {
+      url: string,
+      id: string,
+    }) => void,
     destructive?: boolean,
   }
   secondaryActions?: {
@@ -42,12 +45,6 @@ interface IModal {
     duration?: number,
     error?: boolean,
   },
-  onFormSubmit: {
-    actionHandler: (input: {
-      url: string,
-      id: string,
-    }) => void,
-  }
 }
 
 const Modal: React.FC<IModal> = ({
@@ -59,7 +56,6 @@ const Modal: React.FC<IModal> = ({
   primaryAction,
   secondaryActions,
   toast,
-  onFormSubmit,
 }) => {
 
   const [input, setInput] = useState('')
@@ -72,14 +68,7 @@ const Modal: React.FC<IModal> = ({
   
 
   const handleSubmit = () => {
-    if(onFormSubmit) {
-      onFormSubmit.actionHandler({url: input, id: inputID})
-      console.log({url: input, id: inputID})
-      setInputID('')
-    }
-    else { 
-      primaryAction.actionHandler(input) 
-    }
+    primaryAction.actionHandler({url: input, id: inputID}) 
     setInput('')
     handleChange()
     setShowToast(true)
