@@ -1,4 +1,4 @@
-import useSWR, { mutate } from "swr";
+import useSWR from "swr";
 import { client, fetcher } from "../helpers/api-client";
 
 interface IShop {
@@ -40,7 +40,7 @@ function useGETShopSettings(shop: string): ({
       fetcher
     );
 
-  // mutate(`https://${host}/${name}/settings?shop=${shop}`);
+  // mutate(`https://${host}/${name}/settings`);
 
   return {
     data,
