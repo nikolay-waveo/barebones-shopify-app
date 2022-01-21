@@ -29,7 +29,7 @@ async function useSETShopSubscribeSettings(props: TSETSubscribeProps) {
 }
 
 async function useDELETEShopSubscribeSettings(props: TSubscribeProps) {
-  return await client.delete(`https://${host}/${name}/subscribe`, {
+  return await client.delete(`https://${host}/${name}/subscribe?shop=${props.subscriberShop}`, {
     headers: {
       "x-shopify-shop-domain": `${props.origin}`,
       "Content-Type": "application/json",

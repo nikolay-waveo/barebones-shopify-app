@@ -26,7 +26,7 @@ async function useSETShopPublishSettings(props: TSETPublishProps) {
 }
 
 async function useDELETEShopPublishSettings(props: TPublishProps) {
-  return await client.delete(`https://${host}/${name}/publish`, {
+  return await client.delete(`https://${host}/${name}/publish?shop=${props.publisherShop}`, {
     headers: {
       "x-shopify-shop-domain": `${props.origin}`,
       "Content-Type": "application/json",
