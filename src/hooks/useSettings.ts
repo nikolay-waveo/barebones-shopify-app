@@ -1,5 +1,5 @@
 import useSWR, { mutate } from "swr";
-import { client } from "../helpers/api-client";
+import { client, fetcher } from "../helpers/api-client";
 
 interface IShop {
   shop?: string;
@@ -26,10 +26,21 @@ function useGETShopSettings(shop: string): ({
   isLoading: boolean,
   isError: any,
 }) {
+  const { data, error, mutate } = useSWR(
+    [
+      `https://${host}/${name}/settings`,
+      {
+        headers: {
+          "x-shopify-shop-domain": `${shop}`,
+          // Accept: "application/json",
+          // "Content-Type": "application/json",
+        },
+      }
+    ],
+      fetcher
+    );
 
-  const { data, error} = useSWR(`https://${host}/${name}/settings?shop=${shop}`);
-
-  mutate(`https://${host}/${name}/settings?shop=${shop}`);
+  // mutate(`https://${host}/${name}/settings?shop=${shop}`);
 
   return {
     data,
