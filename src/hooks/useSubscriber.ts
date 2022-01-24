@@ -15,14 +15,13 @@ interface ISubscriberProps {
   publish?: boolean,
 }
 
-interface TShopSettingsResult {
-  publish: boolean,
-  published?: Array<TShop>;
-  subscribed?: Array<TShop>;
+interface ILocationResult {
+  name: string, 
+  id: string,
 }
 
-interface IReturnObject {
-  data: TShopSettingsResult,
+interface IReturnLocation {
+  data: ILocationResult[],
   isLoading: boolean,
   isError: any,
 }
@@ -33,7 +32,7 @@ const name = import.meta.env.VITE_APP_NAME as string;
 function useGETSubscriberLocation({
   origin,
 }: ISubscriberProps
-): IReturnObject {
+): IReturnLocation {
   const options = {
     headers: {
       "x-shopify-shop-domain": `${origin}`,
