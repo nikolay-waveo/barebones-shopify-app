@@ -31,7 +31,7 @@ const Options: React.FC<IOptions> = ({
     </button>;
 
   const actionListItems = [
-    ...options
+    ...options.filter(n => n)
   ];
 
   return (
