@@ -108,9 +108,8 @@ const App: FC<IAppProps> = ({
   }, [data, isLoading, user, ])
 
   useEffect(() => {
-    if(!locationData.isError && !locationData.isLoading) {
-      setLocations([...locationData.data])
-    }
+    if(locationData.isError || locationData.isLoading || locationData.data['message']) return 
+    setLocations([...locationData.data])
   }, [locationData.data, locationData.isLoading])
 
 
