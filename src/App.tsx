@@ -125,6 +125,9 @@ const App: FC<IAppProps> = ({
     }
   }, [locationData.data, locationData.isLoading])
 
+
+  useEffect(() => {}, [locations])
+
   const toggleHasError = useCallback(() => setHasError((hasError) => !hasError),[])
 
 
@@ -195,7 +198,6 @@ const App: FC<IAppProps> = ({
         ])
       } 
     })
-    
   }
 
   const onPublishConnect = (store: TSubscription['subscription']) => {
@@ -287,7 +289,7 @@ const App: FC<IAppProps> = ({
       origin: user,
       publish: false
     })
-    .then((_): void => {
+    .then((): void => {
       setPublishMode(false)
       setIsPublishActive(false)
       closeDeactivatePublishModal()
@@ -420,7 +422,6 @@ const App: FC<IAppProps> = ({
                         <Item
                           item={item} 
                           loading={{
-                            isLoading: itemIsLoading,
                             accessibilityLabel: "Sending request",
                           }}
                           badges={[
@@ -557,7 +558,6 @@ const App: FC<IAppProps> = ({
                         <Item
                           item={item} 
                           loading={{
-                            isLoading: itemIsLoading,
                             accessibilityLabel: "Sending request",
                           }}
                           badges={[
