@@ -1,6 +1,7 @@
 import { List, Badge } from '@shopify/polaris';
 import { FC } from 'react';
 import SetUpInstructions from './SetUpInstructions';
+import img1 from '../assets/Pubsub-asset-1.png'
 
 interface ISetUpSection {
   onFinish(): void,
@@ -10,7 +11,7 @@ const SetUpSection: FC<ISetUpSection> = ({
   onFinish
 }) => {
 
-  const SUBSCRIBING_PAGE = 7
+  const SUBSCRIBING_PAGE = 8
 
   return (
     <SetUpInstructions 
@@ -19,7 +20,7 @@ const SetUpSection: FC<ISetUpSection> = ({
         [
           {
             img: {
-              src: 'https://via.placeholder.com/720x250.png',
+              src: img1,
               alt: 'App introduction image',
             },
             title: (
@@ -95,6 +96,50 @@ const SetUpSection: FC<ISetUpSection> = ({
             title: (
               <div className='flex flex-col items-center space-y-10'>
                 <h2 className='text-3xl font-semibold text-amber-600 text-center'>
+                  Getting your store link
+                </h2>
+              </div>
+            ),
+            content: (
+              <div className='flex flex-col space-y-10 text-emerald-800'>
+                <p className='font-medium'>
+                  Sharing your store link with others is how you get others to subscribe to your store. 
+                </p>
+                <div>
+                  <p className='font-medium pb-2'>
+                    Getting your store link: 
+                  </p>
+                  <List type='number'>
+                    <List.Item>
+                      Navigate to the <span className='font-semibold'>Publish</span> section of the app.
+                    </List.Item>
+                    <List.Item>
+                      Go to the <span className='font-semibold'>Store Publishing</span> card.
+                    </List.Item>
+                    <List.Item>
+                      Click on <span className='font-semibold'>Link</span>.
+                    </List.Item>
+                    <List.Item>
+                      Copy your store link and share it with others.
+                    </List.Item>
+                  </List>
+                </div>
+              </div>
+            ),
+            nextLabel: 'Continue',
+            skipTo: {
+              page: SUBSCRIBING_PAGE,
+              label: 'Skip to subscribing'
+            }
+          },
+          {
+            img: {
+              src: 'https://via.placeholder.com/720x250.png',
+              alt: 'App introduction image',
+            },
+            title: (
+              <div className='flex flex-col items-center space-y-10'>
+                <h2 className='text-3xl font-semibold text-amber-600 text-center'>
                   Your list of subscribers
                 </h2>
               </div>
@@ -108,7 +153,7 @@ const SetUpSection: FC<ISetUpSection> = ({
                   Here you can manage the subscriptions of everyone who is subscribed to your store.
                 </p>
                 <p className='font-medium'>
-                  Subscription requests will appear on your list with a <Badge size='small'>Pending</Badge> badge, 
+                  Subscription requests will appear on your list with a <Badge status='new' size='small'>Pending</Badge> badge, 
                   from here you can choose to accept or decline their subscription to your store. 
                 </p>
                 <div>
@@ -129,7 +174,7 @@ const SetUpSection: FC<ISetUpSection> = ({
                       Click on the options button ( <span className='font-bold text-cyan-500'>⋮</span> ) to open the options popover.
                     </List.Item>
                     <List.Item>
-                      Select <span className='font-semibold'>Activate</span>.
+                      Select <span className='font-semibold'>Accept</span>.
                     </List.Item>
                   </List>
                 </div>
@@ -180,12 +225,12 @@ const SetUpSection: FC<ISetUpSection> = ({
                 <p className='font-medium'>
                   If at any time you no longer wish to allow others to subscribe to your store, you can deactivate publishing.
                   This feature is only available when you have not <Badge status='success' size='small'>Active
-                  </Badge> or <Badge size='small'>Pending</Badge> subscriptions to your store. 
+                  </Badge> or <Badge status='new' size='small'>Pending</Badge> subscriptions to your store. 
                 </p>
                 <p className='font-medium'>
-                  In the case you have <Badge status='success' size='small'>Active</Badge> or <Badge size='small'>Pending</Badge> subscriptions,
-                  you can instead choose to either <span className='text-amber-600'>Pause</span> publishing
-                  or <span className='text-amber-600'>Disconnect all</span> stores.
+                  In the case you have <Badge status='success' size='small'>Active</Badge> or <Badge status='new' size='small'>
+                  Pending</Badge> subscriptions, you can instead choose to either <span className='text-amber-600'>Pause
+                  </span> publishing or <span className='text-amber-600'>Disconnect all</span> stores.
                 </p>
                 <div>
                   <p className='font-medium pb-2'>
@@ -300,8 +345,8 @@ const SetUpSection: FC<ISetUpSection> = ({
             content: (
               <div className='flex flex-col space-y-10 text-emerald-800'>
                 <p className='font-medium'>
-                  This option allows you to disconnect all <Badge status='success' size='small'>Active</Badge> and <Badge size='small'>
-                  Pending</Badge> subscriptions before deactivating publishing on your store.
+                  This option allows you to disconnect all <Badge status='success' size='small'>Active</Badge> and <Badge status='new' 
+                  size='small'>Pending</Badge> subscriptions before deactivating publishing on your store.
                 </p>
                 <div>
                   <p className='font-medium pb-2'>

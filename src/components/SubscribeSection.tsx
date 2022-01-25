@@ -84,29 +84,29 @@ const SubscribeSection: FC<ISubscribeSection> = ({
                   badges={[
                     {
                       status: "pending",
-                      tooltip: "Waiting for publisher confirmation",
+                      tooltip: "Awaiting confirmation",
                       statusStyle: "new",
                     },
                     {
                       status: "active",
-                      tooltip: "There is an active subscription",
+                      tooltip: "An active subscription",
                       statusStyle: "success",
                     },
                     {
                       status: "stopped",
-                      tooltip: "The publisher has stopped the connection",
+                      tooltip: "Subscription canceled by publisher",
                       statusStyle: "critical",
                     },
                     {
                       status: "declined",
-                      tooltip: "The publisher has declined your subscription request",
+                      tooltip: "Subscription request declined",
                       statusStyle: "warning",
                     },
                   ]}
                   options={[
                     {
                       content: 'Disconnect',
-                      helpText: "Deny subscription to your store",
+                      helpText: "Disconnect from a store",
                       icon: CancelSmallMinor,
                       onAction: () => onSubscribeDisconnect(item),
                       destructive: true,

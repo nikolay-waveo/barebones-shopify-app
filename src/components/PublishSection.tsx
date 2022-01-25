@@ -85,7 +85,7 @@ const PublishSection: FC<IPublishSection> = ({
 }) => {
   return (
     <Section
-      sectionTitle="Publisheeee"
+      sectionTitle="Publish"
       sectionDescription="See which stores are subscribed to you." >
 
       <StorePublishingCard
@@ -145,7 +145,7 @@ const PublishSection: FC<IPublishSection> = ({
             items: [
               {
                 destructive: true,
-                content: 'Disable',
+                content: 'Deactivate',
                 icon: CancelSmallMinor,
                 onAction: openDeactivatePublishModal
               },
@@ -179,30 +179,20 @@ const PublishSection: FC<IPublishSection> = ({
                   badges={[
                     {
                       status: "pending",
-                      tooltip: "Waiting for publisher confirmation",
+                      tooltip: "Awaiting confirmation",
                       statusStyle: "new",
                     },
                     {
                       status: "active",
                       displayStatus: isPublishPaused ? "paused" : "active",
-                      tooltip: isPublishPaused ? "Publishing is currently paused" : "There is an active subscription",
+                      tooltip: isPublishPaused ? "Publishing is currently paused" : "An active subscription",
                       statusStyle: isPublishPaused ? "info" : "success",
                     },
-                    {
-                      status: "stopped",
-                      tooltip: "The publisher has stopped the connection",
-                      statusStyle: "critical",
-                    },
-                    {
-                      status: "declined",
-                      tooltip: "The publisher has declined your subscription request",
-                      statusStyle: "warning",
-                    }
                   ]}
                   options={[
                     item.status !== 'active' 
                     ? {
-                      content: 'Connect',
+                      content: 'Accept',
                       helpText: "Accept subscription to your store",
                       icon: TickMinor,
                       onAction: () => onPublishConnect(item),
@@ -210,7 +200,7 @@ const PublishSection: FC<IPublishSection> = ({
                     }
                     : null,
                     {
-                      content: 'Disconnect',
+                      content: item.status !== 'active' ? 'Decline' : 'Disconnect',
                       helpText: "Deny subscription to your store",
                       icon: CancelSmallMinor,
                       onAction: () => onPublishDisconnect(item),
