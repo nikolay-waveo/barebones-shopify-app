@@ -1,4 +1,3 @@
-
 import { Frame, Page, ResourceItem, TextStyle, Toast } from '@shopify/polaris';
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import {
@@ -12,10 +11,17 @@ import List from './components/List';
 import Modal from './components/Modal';
 import Section from './components/Section';
 import SetUpSection from './components/SetUpSection';
-import ModalWithForm from './components/ModalWithForm';
+import ModalWithSelect from './components/ModalWithSelect';
 import StorePublishingCard from './components/StorePublishingCard';
 import { usePublisher } from './hooks/usePublisher';
 import { useSubscriber } from './hooks/useSubscriber';
+import ModalWithForm from './components/ModalWithForm';
+
+
+type TLocation = {
+  name: string,
+  id: string
+}
 
 type TSubscription = {
   subscription: {
@@ -49,8 +55,9 @@ const App: FC<IAppProps> = ({
   const [itemIsLoading, setItemIsLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState("")
   const [hasError, setHasError] = useState(false)
+  const [locations, setLocations] = useState<TLocation[]>([])
 
-  const renderCount = useRef(0)
+  const renderCount = useRef(true)
 
   const {
     useDisplayPublisher,
@@ -70,6 +77,8 @@ const App: FC<IAppProps> = ({
     isLoading,
     isError
   } = useDisplayPublisher({ origin: user })
+
+  const locationData = useRetrieveLocation({ origin: user })
 
   useEffect(() => {
     // GET incoming and outgoing subscriptions
@@ -103,14 +112,21 @@ const App: FC<IAppProps> = ({
       setSubscribedTo(subscribedToData) 
       setPublishMode(data.publish)
 
-      if(renderCount.current <= 0) {
+      if(renderCount.current) {
         setIsPublishActive(data.publish)
-        renderCount.current = renderCount.current + 1;
+        renderCount.current = false;
       }
     }
-  }, [data, isLoading, user])
+  }, [data, isLoading, user, ])
+
+  useEffect(() => {
+    if(!locationData.isError && !locationData.isLoading) {
+      setLocations([...locationData.data])
+    }
+  }, [locationData.data, locationData.isLoading])
 
   const toggleHasError = useCallback(() => setHasError((hasError) => !hasError),[])
+
 
   const errorCodeToMessage = (code: string): string => {
     switch(code) {
@@ -123,20 +139,9 @@ const App: FC<IAppProps> = ({
   //* ---------------------------------------------------------------------------------------------------------------
   // List
 
-  const onItemIsLoading = useCallback(
-    (list: TSubscription['subscription'][]) => {
+  const onItemIsLoading = useCallback((list: TSubscription['subscription'][]) => {
       const hasData = list
-        .every(({
-          storeURL,
-          id,
-          status
-        }) => {
-          return (
-            storeURL === undefined ||
-            id === undefined ||
-            status === undefined
-          )
-        })
+        .every((item) => isItemLoading(item))
         setItemIsLoading(!hasData)
     },
     [publishedTo, subscribedTo],
@@ -146,6 +151,14 @@ const App: FC<IAppProps> = ({
     onItemIsLoading(publishedTo)
     onItemIsLoading(subscribedTo)
   }, [publishedTo, subscribedTo, itemIsLoading, onItemIsLoading])
+
+  const isItemLoading = (item: {
+    storeURL: string,
+    id: string,
+    status: string,
+  }): boolean => {
+    return !(item.id && item.status && item.storeURL)
+  }
 
   const addToSubscribedToListHandler = (store: {
     url: string,
@@ -182,6 +195,7 @@ const App: FC<IAppProps> = ({
         ])
       } 
     })
+    
   }
 
   const onPublishConnect = (store: TSubscription['subscription']) => {
@@ -190,7 +204,7 @@ const App: FC<IAppProps> = ({
       shop: store.storeURL,
       accept: true,
     })
-    .then((_): void => {
+    .then((): void => {
       const newList = publishedTo.map((item) => item.storeURL === store.storeURL ? {...item, status: "active"} : item )
       setPublishedTo(newList);
     })
@@ -202,7 +216,7 @@ const App: FC<IAppProps> = ({
         origin: user, 
         shop: store.storeURL
       })
-      .then((_): void => {
+      .then((): void => {
         const newList = publishedTo.filter((item) => item.storeURL !== store.storeURL);
         setPublishedTo(newList);
       })
@@ -213,7 +227,7 @@ const App: FC<IAppProps> = ({
         shop: store.storeURL,
         accept: false,
       })
-      .then((_): void => {
+      .then((): void => {
         const newList = publishedTo.filter((item) => item.storeURL !== store.storeURL);
         setPublishedTo(newList);
       })
@@ -225,7 +239,7 @@ const App: FC<IAppProps> = ({
       origin: user,
       shop: store.storeURL
     })
-    .then(_ => {
+    .then(() => {
       const newList = subscribedTo.filter((item) => item.storeURL !== store.storeURL);
       setSubscribedTo(newList);
     })
@@ -247,6 +261,9 @@ const App: FC<IAppProps> = ({
 
   const openCalloutCardModal = (): void => setShowCalloutCardModal(true)
   const closeCalloutCardModal = (): void => setShowCalloutCardModal(false)    
+
+  const openAddToListModal = (): void => setShowAddToListModal(true)
+  const closeAddToListModal = (): void => setShowAddToListModal(false)
 
   const handlePublish = useCallback(() => {
     if (isPublishActive) {
@@ -283,7 +300,7 @@ const App: FC<IAppProps> = ({
       origin: user,
       publish: false
     })
-    .then((_): void => {
+    .then((): void => {
       setPublishMode(false)
       setIsPublishActive(false)
       closeDisconnectAllModal()
@@ -311,6 +328,7 @@ const App: FC<IAppProps> = ({
       : <Page
           title="Store Product Sync"
           fullWidth={true}>
+
           <div className="grid grid-cols-1 gap-10 mb-20">
             <Section
               sectionTitle="Publish"
@@ -402,7 +420,7 @@ const App: FC<IAppProps> = ({
                         <Item
                           item={item} 
                           loading={{
-                            isLoading: !isLoading,
+                            isLoading: itemIsLoading,
                             accessibilityLabel: "Sending request",
                           }}
                           badges={[
@@ -429,13 +447,15 @@ const App: FC<IAppProps> = ({
                             }
                           ]}
                           options={[
-                            {
+                            item.status !== 'active' 
+                            ? {
                               content: 'Connect',
                               helpText: "Accept subscription to your store",
                               icon: TickMinor,
                               onAction: () => onPublishConnect(item),
                               active: true,
-                            },
+                            }
+                            : null,
                             {
                               content: 'Disconnect',
                               helpText: "Deny subscription to your store",
@@ -527,7 +547,7 @@ const App: FC<IAppProps> = ({
                 }}
                 primaryAction={{
                   content: "New Subscription",
-                  onAction: () => setShowAddToListModal(true),
+                  onAction: openAddToListModal,
                 }}
                 renderItem={(item) => { 
                   return (
@@ -575,37 +595,70 @@ const App: FC<IAppProps> = ({
                     )
                 }} />
                 
-              <ModalWithForm
-                title="Subscribe to a new store"
-                content="You can add the store subscription link here to subscribe to that
-                  store and recieve product updates from them."
-                isModalOpen={showAddToListModal}
-                modalHandler={setShowAddToListModal}
-                primaryAction={{
-                  actionText: "Subscribe",
-                  actionHandler: (e) => addToSubscribedToListHandler(e)
-                }}
-                secondaryActions={[
-                  {
-                    actionText: "Cancel",
-                    actionHandler: () => setShowAddToListModal(false),
-                  },
-                ]}
-                inputAction={{
-                  id: "modalInput",
-                  label: "Store Link",
-                  placeholder: "Example: store.myshopify.com",
-                  errorMessage: "Invalid input",
-                  errorHandler: (input) => {
-                    const storeURLPattern = /(\w+-)*\w+(.myshopify.com)/
-                    if(!input) return true
-                    return !storeURLPattern.test(input)
-                  }
-                }}
-                toast={{
-                  content: "Request Sent",
-                }} />
-
+                { locations.length > 0
+                  ? <ModalWithSelect
+                    title="Subscribe to a new store"
+                    content="You can add the store subscription link here to subscribe to that
+                      store and recieve product updates from them."
+                    isModalOpen={showAddToListModal}
+                    modalHandler={setShowAddToListModal}
+                    primaryAction={{
+                      actionText: "Subscribe",
+                      actionHandler: (e) => addToSubscribedToListHandler(e)
+                    }}
+                    secondaryActions={[
+                      {
+                        actionText: "Cancel",
+                        actionHandler: closeAddToListModal,
+                      },
+                    ]}
+                    inputAction={{
+                      id: "storeLinkInput",
+                      label: "Store Link",
+                      placeholder: "Example: store.myshopify.com",
+                      errorMessage: "Invalid input",
+                      errorHandler: (input): boolean => {
+                        const storeURLPattern = /(\w+-)*\w+(.myshopify.com)/
+                        if(!input) return true
+                        return !storeURLPattern.test(input) 
+                      },
+                      required: true
+                    }}
+                    locations={locations}
+                    toast={{
+                      content: "Request Sent",
+                    }} /> 
+                  : <ModalWithForm 
+                      title="Subscribe to a new store"
+                      content="You can add the store subscription link here to subscribe to that
+                        store and recieve product updates from them."
+                      isModalOpen={showAddToListModal}
+                      modalHandler={setShowAddToListModal}
+                      primaryAction={{
+                        actionText: "Subscribe",
+                        actionHandler: (e) => addToSubscribedToListHandler(e)
+                      }}
+                      secondaryActions={[
+                        {
+                          actionText: "Cancel",
+                          actionHandler: closeAddToListModal,
+                        },
+                      ]}
+                      inputAction={{
+                        id: "storeLinkInput",
+                        label: "Store Link",
+                        placeholder: "Example: store.myshopify.com",
+                        errorMessage: "Invalid input",
+                        errorHandler: (input): boolean => {
+                          const storeURLPattern = /(\w+-)*\w+(.myshopify.com)/
+                          if(!input) return true
+                          return !storeURLPattern.test(input) 
+                        },
+                      }}
+                      toast={{
+                        content: "Request Sent",
+                      }}/>
+                }
             </Section>
           </div>
         </Page>}
