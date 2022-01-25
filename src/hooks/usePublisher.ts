@@ -42,7 +42,10 @@ function useGETPublisher({
 
   const { data, error } = useSWR(
     [ `https://${host}/${name}/settings`, options ], 
-    fetcher 
+    fetcher,
+    {
+      refreshInterval: 1000
+    }
   );
 
   return {
