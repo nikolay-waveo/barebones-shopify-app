@@ -1,24 +1,17 @@
 import * as polaris from '@shopify/polaris';
 import {
-  Button,
   Form,
   FormLayout,
   InlineError,
-  Select,
   Stack,
   TextContainer,
   TextField,
   Toast
 } from '@shopify/polaris';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import useAsyncState from '../hooks/useAsyncState';
 
 declare type Type = 'text' | 'email' | 'number' | 'password' | 'search' | 'tel' | 'url' | 'date' | 'datetime-local' | 'month' | 'time' | 'week' | 'currency';
-
-type TLocation = {
-  name: string,
-  id: string
-}
 
 interface IModal {
   title: string,
@@ -32,7 +25,6 @@ interface IModal {
     type?: Type,
     errorMessage?: string,
     errorHandler?: (input: string) => boolean,
-    required?: boolean
   }
   primaryAction: {
     actionText: string, 
@@ -54,11 +46,7 @@ interface IModal {
   },
 }
 
-interface IModalWithForm extends IModal {
-  locations: TLocation[]
-}
-
-const Modal: React.FC<IModalWithForm> = ({
+const Modal: React.FC<IModal> = ({
   title,
   content,
   isModalOpen,
@@ -67,40 +55,24 @@ const Modal: React.FC<IModalWithForm> = ({
   primaryAction,
   secondaryActions,
   toast,
-  locations
 }) => {
 
-  const [locationList] = useState<TLocation[]>(locations)
   const [input, setInput] = useState('')
   const [showToast, setShowToast] = useState(false)
-  const [error, setError] = useAsyncState(false)
-  const [selected, setSelected] = useState(locationList[0].id)
+  const [hasError, setHasError] = useAsyncState(false)
+  const [inputID, setInputID] = useState("")
 
   const toggleShowToast = useCallback(() => setShowToast(false), []);
   const handleChange = useCallback(() => modalHandler(!isModalOpen), [isModalOpen, modalHandler]);
-  const handleSelectChange = useCallback((value) => { setSelected(value) }, []);
-  const handleSubmit = () => {
-    const hasError = errorHandler(input)
-    console.log(hasError)
-    setError(hasError)
-    if (!hasError) {
-      primaryAction.actionHandler({url: input, id: selected}) 
-      setInput('')
-      handleChange()
-      setShowToast(true)
-      setError(false)
-    }
-  }
+  
 
-  const {
-    id,
-    label,
-    placeholder,
-    type = 'text',
-    errorMessage,
-    errorHandler,
-    required = false,
-  } = inputAction
+  const handleSubmit = () => {
+    primaryAction.actionHandler({url: input, id: inputID}) 
+    setInput('')
+    handleChange()
+    setShowToast(true)
+    setHasError(false)
+  }
 
   const toastMarkup = toast
     ? (<Toast 
@@ -123,16 +95,8 @@ const Modal: React.FC<IModalWithForm> = ({
         destructive: destructive
     }))
   ]
-
-  const options = [
-    ...locationList.map(location => {
-      return {
-        label: location.name,
-        value: location.id
-      }
-    })
-  ]
-
+  
+  
   return (
     <>
       <polaris.Modal
@@ -143,7 +107,7 @@ const Modal: React.FC<IModalWithForm> = ({
           content: primaryAction.actionText,
           onAction: handleSubmit,
           destructive: primaryAction?.destructive,
-          disabled: !input
+          disabled: !input || !inputID
         }}
         {...modalActions}>
           <polaris.Modal.Section>
@@ -161,36 +125,27 @@ const Modal: React.FC<IModalWithForm> = ({
                   <FormLayout>
                     
                     <TextField
-                      id={id}
-                      label={label}
+                      label={inputAction.label}
                       value={input}
-                      onChange={(e) => {
-                        setError(false)
-                        setInput(e)
-                      }}
+                      onChange={(e) => setInput(e)}
                       autoComplete="off"
-                      placeholder={placeholder}
-                      type={type}
-                      error={error}
-                      requiredIndicator={required}
                       />
 
-                    { error && 
-                      <div className='mt-4'>
-                        <InlineError message={errorMessage} fieldID={id} />
-                      </div> 
-                    }
-
-                    <Select 
-                      label="Store Location" 
-                      options={options}
-                      onChange={handleSelectChange} 
-                      value={selected}
+                    <TextField
+                      label="Inventory Location ID"
+                      value={inputID}
+                      onChange={(e) => setInputID(e)}
+                      autoComplete="off"
                       />
 
                   </FormLayout>
                 </Form>
 
+                  { hasError &&
+                    <div className='mt-4'>
+                      <InlineError message={inputAction.errorMessage} fieldID={inputAction.id} />
+                    </div>
+                  }
               </Stack.Item> 
             }
             </Stack>
