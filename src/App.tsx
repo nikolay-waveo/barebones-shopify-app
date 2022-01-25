@@ -239,10 +239,6 @@ const App: FC<IAppProps> = ({
   //* ---------------------------------------------------------------------------------------------------------------
   // Toggle
 
-  useEffect(() => {
-    setPublishMode(publishMode)
-  }, [publishMode])
-
   const openDeactivatePublishModal = (): void => setShowDeactivatePublishModal(true)
   const closeDeactivatePublishModal = (): void => setShowDeactivatePublishModal(false)
 
@@ -254,6 +250,10 @@ const App: FC<IAppProps> = ({
 
   const openAddToListModal = (): void => setShowAddToListModal(true)
   const closeAddToListModal = (): void => setShowAddToListModal(false)
+  
+  useEffect(() => {
+    setPublishMode(publishMode)
+  }, [publishMode])
 
   const handlePublish = useCallback(() => {
     if (isPublishActive) {
@@ -314,58 +314,59 @@ const App: FC<IAppProps> = ({
   return (
     <Frame>
       { postInstall
-      ? <SetUpSection onFinish={() => setPostInstall(false)} />
-      : <Page
-          title="Store Product Sync"
-          fullWidth={true}>
+        ? <SetUpSection onFinish={() => setPostInstall(false)} />
+        : <Page
+            title="Store Product Sync"
+            fullWidth={true}>
 
-          <div className="grid grid-cols-1 gap-10 mb-20">
-            <PublishSection 
-              user={user}
-              hasError={hasError}
-              errorMessage={errorMessage}
-              publishedTo={publishedTo}
-              isPublishActive={isPublishActive}
-              isPublishPaused={isPublishPaused}
+            <div className="grid grid-cols-1 gap-10 mb-20">
+              <PublishSection 
+                user={user}
+                hasError={hasError}
+                errorMessage={errorMessage}
+                publishedTo={publishedTo}
+                isPublishActive={isPublishActive}
+                isPublishPaused={isPublishPaused}
 
-              handlePause={handlePause}
-              handlePublish={handlePublish}
-              toggleHasError={toggleHasError}
-              onPublishConnect={onPublishConnect}
-              onPublishDisconnect={onPublishConnect}
+                handlePause={handlePause}
+                handlePublish={handlePublish}
+                toggleHasError={toggleHasError}
+                onPublishConnect={onPublishConnect}
+                onPublishDisconnect={onPublishConnect}
 
-              showCalloutCardModal={showCalloutCardModal}
-              openCalloutCardModal={openCalloutCardModal}
-              closeCalloutCardModal={closeCalloutCardModal}
-              setShowCalloutCardModal={setShowCalloutCardModal}
+                showCalloutCardModal={showCalloutCardModal}
+                openCalloutCardModal={openCalloutCardModal}
+                closeCalloutCardModal={closeCalloutCardModal}
+                setShowCalloutCardModal={setShowCalloutCardModal}
 
-              showDisconnectAllModal={showDisconnectAllModal}
-              openDisconnectAllModal={openDisconnectAllModal}
-              closeDisconnectAllModal={closeDisconnectAllModal}
-              handleDisconnectAllModal={handleDisconnectAllModal}
-              setShowDisconnectAllModal={setShowDisconnectAllModal}
+                showDisconnectAllModal={showDisconnectAllModal}
+                openDisconnectAllModal={openDisconnectAllModal}
+                closeDisconnectAllModal={closeDisconnectAllModal}
+                handleDisconnectAllModal={handleDisconnectAllModal}
+                setShowDisconnectAllModal={setShowDisconnectAllModal}
 
-              showDeactivatePublishModal={showDeactivatePublishModal}
-              openDeactivatePublishModal={openDeactivatePublishModal}
-              closeDeactivatePublishModal={closeDeactivatePublishModal}
-              handleDeactivatePublishModal={handleDeactivatePublishModal}
-              setShowDeactivatePublishModal={setShowDeactivatePublishModal}
-              />
+                showDeactivatePublishModal={showDeactivatePublishModal}
+                openDeactivatePublishModal={openDeactivatePublishModal}
+                closeDeactivatePublishModal={closeDeactivatePublishModal}
+                handleDeactivatePublishModal={handleDeactivatePublishModal}
+                setShowDeactivatePublishModal={setShowDeactivatePublishModal}
+                />
 
-            <SubscribeSection 
-              subscribedTo={subscribedTo}
-              locations={locations}
-            
-              onSubscribeDisconnect={onSubscribeDisconnect}
-              addToSubscribedToListHandler={addToSubscribedToListHandler}
-            
-              showAddToListModal={showAddToListModal}
-              openAddToListModal={openAddToListModal}
-              closeAddToListModal={closeAddToListModal}
-              setShowAddToListModal={setShowAddToListModal}
-              />
-          </div>
-        </Page>}
+              <SubscribeSection 
+                subscribedTo={subscribedTo}
+                locations={locations}
+              
+                onSubscribeDisconnect={onSubscribeDisconnect}
+                addToSubscribedToListHandler={addToSubscribedToListHandler}
+              
+                showAddToListModal={showAddToListModal}
+                openAddToListModal={openAddToListModal}
+                closeAddToListModal={closeAddToListModal}
+                setShowAddToListModal={setShowAddToListModal}
+                />
+            </div>
+          </Page>
+        }
     </Frame>
   )
 }
