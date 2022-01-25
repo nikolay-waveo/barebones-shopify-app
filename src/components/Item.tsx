@@ -1,5 +1,5 @@
 import { Badge, SkeletonDisplayText, Spinner, TextStyle, Tooltip } from '@shopify/polaris'
-import React, { FC, SVGProps } from 'react'
+import React, { FC, SVGProps, useEffect } from 'react'
 import Options from './Options'
 
 declare type Status = 'success' | 'info' | 'critical' | 'warning' | 'new'
@@ -27,7 +27,6 @@ interface IItem {
     destructive?: boolean,
   }[],
   loading?: {
-    isLoading: boolean,
     accessibilityLabel: string,
   },
 }
@@ -45,22 +44,25 @@ const Item: React.FC<IItem> = ({
   } = item
 
   const {
-    isLoading,
-    accessibilityLabel,
-  } = loading || {}
+    accessibilityLabel = 'Loading Spinner',
+  } = loading
+
+  const hasContent = (): boolean => {
+    return !!(item.status && item.id && item.storeURL)
+  }
 
   const badge = badges.find(badge => status === badge.status)
 
   return (
     <div className="grid grid-cols-9">
       <h3 className="col-span-7 truncate">
-        { isLoading
+        { hasContent()
           ? <TextStyle variation="strong">{storeURL}</TextStyle>
           : <SkeletonDisplayText size="small" /> }
       </h3>
       <div className="col-start-8 justify-self-center">
-        { !isLoading && <Spinner accessibilityLabel={accessibilityLabel} size="small" /> }
-        { isLoading && badge && 
+        { !hasContent() && <Spinner accessibilityLabel={accessibilityLabel} size="small" /> }
+        { hasContent() && badge && 
           <Tooltip 
             content={badge.tooltip}
             preferredPosition='above' >
