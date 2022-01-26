@@ -18,8 +18,8 @@ declare type ToggleState = {
 
 interface IToggle {
   activated: boolean,
-  onActivate: ToggleState,
-  onDeactivate: ToggleState,
+  onActivated: ToggleState,
+  onDeactivated: ToggleState,
 }
 
 interface IStorePublishingCard extends IToggle {
@@ -29,14 +29,14 @@ interface IStorePublishingCard extends IToggle {
 const StorePublishingCard: FC<IStorePublishingCard> = ({
   activated,
   primary,
-  onActivate,
-  onDeactivate,
+  onActivated,
+  onDeactivated,
 }) => {
   const [optionsActive, setOptionsActive] = useState(false)
 
   const toggleOptionsActive = useCallback(() => setOptionsActive((optionsActive) => !optionsActive), []);
 
-  const state = activated ? onActivate : onDeactivate;
+  const state = activated ? onActivated : onDeactivated;
 
   const { 
     title,
@@ -98,7 +98,9 @@ const StorePublishingCard: FC<IStorePublishingCard> = ({
                 active={optionsActive}
                 activator={activator}
                 onClose={toggleOptionsActive} >
-                <ActionList sections={sections} />
+                <ActionList 
+                  sections={sections} 
+                  onActionAnyItem={toggleOptionsActive}/>
               </Popover>
              }
         </div>
