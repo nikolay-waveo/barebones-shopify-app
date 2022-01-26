@@ -59,19 +59,21 @@ const Modal: React.FC<IModal> = ({
 
   const [input, setInput] = useState('')
   const [showToast, setShowToast] = useState(false)
-  const [hasError, setHasError] = useAsyncState(false)
+  const [error, setError] = useAsyncState(false)
   const [inputID, setInputID] = useState("")
 
   const toggleShowToast = useCallback(() => setShowToast(false), []);
   const handleChange = useCallback(() => modalHandler(!isModalOpen), [isModalOpen, modalHandler]);
-  
-
   const handleSubmit = () => {
-    primaryAction.actionHandler({url: input, id: inputID}) 
-    setInput('')
-    handleChange()
-    setShowToast(true)
-    setHasError(false)
+    const hasError = inputAction.errorHandler(input)
+    setError(hasError)
+    if (!hasError) {
+      primaryAction.actionHandler({url: input, id: inputID}) 
+      setInput('')
+      handleChange()
+      setShowToast(true)
+      setError(false)
+    }
   }
 
   const toastMarkup = toast
@@ -125,11 +127,21 @@ const Modal: React.FC<IModal> = ({
                   <FormLayout>
                     
                     <TextField
+                      id={inputAction.id}
                       label={inputAction.label}
                       value={input}
-                      onChange={(e) => setInput(e)}
+                      onChange={(e) => {
+                        setError(false)
+                        setInput(e)
+                      }}
                       autoComplete="off"
                       />
+
+                    { error &&
+                      <div className='mt-4'>
+                        <InlineError message={inputAction.errorMessage} fieldID={inputAction.id} />
+                      </div>
+                    }
 
                     <TextField
                       label="Inventory Location ID"
@@ -141,11 +153,6 @@ const Modal: React.FC<IModal> = ({
                   </FormLayout>
                 </Form>
 
-                  { hasError &&
-                    <div className='mt-4'>
-                      <InlineError message={inputAction.errorMessage} fieldID={inputAction.id} />
-                    </div>
-                  }
               </Stack.Item> 
             }
             </Stack>

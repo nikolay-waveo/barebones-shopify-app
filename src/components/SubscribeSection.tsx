@@ -139,7 +139,7 @@ const SubscribeSection: FC<ISubscribeSection> = ({
                 placeholder: "Example: store.myshopify.com",
                 errorMessage: "Invalid input",
                 errorHandler: (input): boolean => {
-                  const storeURLPattern = /(\w+-)*\w+(.myshopify.com)/
+                  const storeURLPattern = /^(\w+-)*\w+(.myshopify.com)$/
                   if(!input) return true
                   return !storeURLPattern.test(input) 
                 },
@@ -171,7 +171,7 @@ const SubscribeSection: FC<ISubscribeSection> = ({
                 placeholder: "Example: store.myshopify.com",
                 errorMessage: "Invalid input",
                 errorHandler: (input): boolean => {
-                  const storeURLPattern = /(\w+-)*\w+(.myshopify.com)/
+                  const storeURLPattern = /^(\w+-)*\w+(.myshopify.com)$/
                   if(!input) return true
                   return !storeURLPattern.test(input) 
                 },
