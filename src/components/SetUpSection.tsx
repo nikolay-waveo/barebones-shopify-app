@@ -120,7 +120,7 @@ const SetUpSection: FC<ISetUpSection> = ({
                       Click on <span className='font-semibold'>Link</span>.
                     </List.Item>
                     <List.Item>
-                      Copy your store link and share it with others.
+                      Click on <span className='font-semibold'>Copy link</span>.
                     </List.Item>
                   </List>
                 </div>
