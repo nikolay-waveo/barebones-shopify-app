@@ -120,9 +120,18 @@ const App: FC<IAppProps> = ({
 
   const errorCodeToMessage = (code: string): string => {
     switch(code) {
-      case "not_publishing":  return "Store not publishing"
-      case "cyclic_dependency": return "Cannot subscribe to self"
-      default: return ""
+      case "not_publishing":      return "Store not publishing"
+      case "cyclic_dependency":   return "Cannot subscribe to self"
+      case "shop_required":       return "'shop' required"
+      case "locationId_required": return "'inventoryLocationId' required"
+      case "enabled_is_boolean":  return "'enabled' must be boolean"
+      case "not_subscribed":      return "Not subscribed"
+      case "accept_is_boolean":   return "'accept' must be boolean"
+      case "stop_is_boolean":     return "'stop' must be boolean"
+      case "publish_is_boolean":  return "'publish' must be boolean"
+      case "already_declined":    return "Already declined"
+      case "indirect_subscribed": return "Indirect subscribed"
+      default:                    return "Unexpected Error"
     }
   }
 
@@ -234,6 +243,14 @@ const App: FC<IAppProps> = ({
     })
   }
 
+  const onCopyToClipboard = (id: string): void => {
+    const range = document.createRange();
+    range.selectNode(document.getElementById(id));
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(range);
+    document.execCommand('copy');
+    window.getSelection().removeAllRanges();
+  }
  
   //* ---------------------------------------------------------------------------------------------------------------
   // Toggle
@@ -330,6 +347,7 @@ const App: FC<IAppProps> = ({
                 handlePause={handlePause}
                 handlePublish={handlePublish}
                 toggleHasError={toggleHasError}
+                onCopyToClipboard={onCopyToClipboard}
                 onPublishConnect={onPublishConnect}
                 onPublishDisconnect={onPublishConnect}
 

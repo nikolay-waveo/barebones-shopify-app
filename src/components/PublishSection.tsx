@@ -31,6 +31,7 @@ interface IPublishSection {
   handlePause: () => void,
   handlePublish: () => void,
   toggleHasError: () => void,
+  onCopyToClipboard: (id: string) => void,
   onPublishConnect: (item: TSubscription['subscription']) => void,
   onPublishDisconnect: (item: TSubscription['subscription']) => void,
   
@@ -63,6 +64,7 @@ const PublishSection: FC<IPublishSection> = ({
   handlePause,
   handlePublish,
   toggleHasError,
+  onCopyToClipboard,
   onPublishConnect,
   onPublishDisconnect,
 
@@ -83,6 +85,7 @@ const PublishSection: FC<IPublishSection> = ({
   handleDeactivatePublishModal,
   setShowDeactivatePublishModal,
 }) => {
+
   return (
     <Section
       sectionTitle="Publish"
@@ -235,13 +238,13 @@ const PublishSection: FC<IPublishSection> = ({
         }} />
 
       <Modal
-        title="Disable Publishing"
-        content="Disabling this setting will stop others from finding your 
+        title="Deactivate Publishing"
+        content="Deactivating this setting will stop others from finding your 
           store. Do you wish to continue?" 
         isModalOpen={showDeactivatePublishModal}
         modalHandler={setShowDeactivatePublishModal} 
         primaryAction={{
-          actionText: "Disable",
+          actionText: "Deactivate",
           actionHandler: handleDeactivatePublishModal,
           destructive: true
         }}
@@ -252,23 +255,29 @@ const PublishSection: FC<IPublishSection> = ({
           },
         ]}
         toast={{
-          content: "Publishing Disabled"
+          content: "Publishing Deactivated"
         }} />
 
       <Modal
         title="Get your store link"
         content={
           <p>
-            Your store link is <TextStyle variation="code">{user}</TextStyle>. 
+            Your store link is <TextStyle variation="code"><span id='copyTarget'>{user}</span></TextStyle>. 
             Share it with others so that they can find and subscribe to your store.
           </p>
         }
         isModalOpen={showCalloutCardModal}
         modalHandler={setShowCalloutCardModal} 
         primaryAction={{
-          actionText: "Continue",
-          actionHandler: closeCalloutCardModal,
-        }} />
+          actionText: "Copy link",
+          actionHandler: () => onCopyToClipboard('copyTarget'),
+        }}
+        secondaryActions={[
+          {
+            actionText: "Cancel",
+            actionHandler: closeCalloutCardModal,
+          },
+        ]} />
       
     </Section>
   );
