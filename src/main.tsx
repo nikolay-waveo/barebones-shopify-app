@@ -9,10 +9,6 @@ import './styles/tailwind.css'
 
 const params = new URLSearchParams(window.location.search)
 
-//* ?apiKey=a9e11c2e82400ef003f1966dadc6332e&shop=dev-subscriber.myshopify.com&host=ZGV2LXN1YnNjcmliZXIubXlzaG9waWZ5LmNvbS9hZG1pbg==&init=true
-
-// 'shoes-magic.myshopify.com' | 'sweet-limited.myshopify.com'
-
 const SHOP_ORIGIN = params.get('shop')
 const API_KEY = params.get('apiKey')
 const HOST = params.get('host')
