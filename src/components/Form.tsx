@@ -1,5 +1,5 @@
 import * as polaris from '@shopify/polaris';
-import { FormLayout, InlineError, Select, TextField } from '@shopify/polaris';
+import { Button, FormLayout, InlineError, Select, TextField } from '@shopify/polaris';
 import { FC } from 'react';
 
 declare type Type = 'text' | 'email' | 'number' | 'password' | 'search' | 'tel' | 'url' | 'date' | 'datetime-local' | 'month' | 'time' | 'week' | 'currency';
@@ -7,6 +7,11 @@ declare type Type = 'text' | 'email' | 'number' | 'password' | 'search' | 'tel' 
 interface IForm {
   select?: boolean,
   submit: () => void,
+  submitButton?: {
+    content: string,
+    fullWidth?: boolean,
+    primary?: boolean,
+  }
   primary: {
     id: string, 
     label: string,
@@ -34,6 +39,7 @@ interface IForm {
 const Form: FC<IForm> = ({
   select, 
   submit,
+  submitButton,
   primary,
   secondary,
   error,
@@ -77,6 +83,12 @@ const Form: FC<IForm> = ({
               autoComplete="off"
               />
         }
+        <Button 
+          fullWidth={submitButton.fullWidth} 
+          primary={submitButton.primary} 
+          submit>
+            {submitButton.content}
+        </Button>
       </FormLayout>
     </polaris.Form>
   );
