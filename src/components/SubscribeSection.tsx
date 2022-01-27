@@ -84,12 +84,12 @@ const SubscribeSection: FC<ISubscribeSection> = ({
                   badges={[
                     {
                       status: "pending",
-                      tooltip: "Awaiting confirmation",
+                      tooltip: "Pending publisher approval",
                       statusStyle: "new",
                     },
                     {
                       status: "active",
-                      tooltip: "An active subscription",
+                      tooltip: "Your subscription is active",
                       statusStyle: "success",
                     },
                     {
@@ -99,7 +99,7 @@ const SubscribeSection: FC<ISubscribeSection> = ({
                     },
                     {
                       status: "declined",
-                      tooltip: "Subscription request declined",
+                      tooltip: "Subscription declined by publisher",
                       statusStyle: "warning",
                     },
                   ]}
