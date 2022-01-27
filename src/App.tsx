@@ -417,8 +417,8 @@ const App: FC<IAppProps> = ({
               },
               {
                 actionName: 'subscribing',
-                actionHandler: () => {},
-                state: true,
+                actionHandler: addToSubscribedToListHandler,
+                assets: locations
               },
             ]} />
         : <Page
@@ -430,14 +430,7 @@ const App: FC<IAppProps> = ({
                 user={user}
                 hasError={hasError}
                 errorMessage={errorMessage}
-                publishedTo={[
-                  {
-                    status: 'active',
-                    storeURL: 'test',
-                    id: '0000',
-                    updatedAt: '2022-01-25T16:10:19.120Z',
-                  }
-                ]}
+                publishedTo={publishedTo}
                 isPublishActive={isPublishActive}
                 isPublishPaused={isPublishPaused}
 
@@ -467,32 +460,7 @@ const App: FC<IAppProps> = ({
                 />
 
               <SubscribeSection
-                subscribedTo={[
-                  {
-                    status: 'active',
-                    storeURL: 'test',
-                    id: '0000',
-                    updatedAt: '2022-01-25T16:10:19.120Z',
-                  },
-                  {
-                    status: 'pending',
-                    storeURL: 'test',
-                    id: '0000',
-                    updatedAt: '2022-01-25T16:10:19.120Z',
-                  },
-                  {
-                    status: 'stopped',
-                    storeURL: 'test',
-                    id: '0000',
-                    updatedAt: '2020-01-25T16:10:19.120Z',
-                  },
-                  {
-                    status: 'declined',
-                    storeURL: 'test',
-                    id: '0000',
-                    updatedAt: '2022-01-25T16:10:19.120Z',
-                  }
-                ]}
+                subscribedTo={subscribedTo}
                 locations={locations}
               
                 onSubscribeDisconnect={onSubscribeDisconnect}
