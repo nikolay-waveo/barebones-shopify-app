@@ -1,15 +1,12 @@
 import * as polaris from '@shopify/polaris';
 import {
-  Form,
-  FormLayout,
-  InlineError,
   Stack,
   TextContainer,
-  TextField,
   Toast
 } from '@shopify/polaris';
 import React, { useCallback, useState } from 'react';
 import useAsyncState from '../hooks/useAsyncState';
+import Form from './Form';
 
 declare type Type = 'text' | 'email' | 'number' | 'password' | 'search' | 'tel' | 'url' | 'date' | 'datetime-local' | 'month' | 'time' | 'week' | 'currency';
 
@@ -123,36 +120,30 @@ const Modal: React.FC<IModal> = ({
               </Stack.Item>
             { inputAction &&
               <Stack.Item fill>
-                <Form onSubmit={handleSubmit}>
-                  <FormLayout>
-                    
-                    <TextField
-                      id={inputAction.id}
-                      label={inputAction.label}
-                      value={input}
-                      onChange={(e) => {
-                        setError(false)
-                        setInput(e)
-                      }}
-                      autoComplete="off"
-                      />
-
-                    { error &&
-                      <div className='mt-4'>
-                        <InlineError message={inputAction.errorMessage} fieldID={inputAction.id} />
-                      </div>
-                    }
-
-                    <TextField
-                      label="Inventory Location ID"
-                      value={inputID}
-                      onChange={(e) => setInputID(e)}
-                      autoComplete="off"
-                      />
-
-                  </FormLayout>
-                </Form>
-
+                <Form
+                  submit={handleSubmit}
+                  primary={{
+                    id: inputAction.id, 
+                    label: inputAction.label,
+                    value: input,
+                    onChange: (e) => {
+                      setInput(e)
+                      setError(false)
+                    },
+                    placeholder: 'Example: store.myshopify.com',
+                    type: 'text',
+                    errorMessage: 'Invalid input',
+                    required: true,
+                  }}
+                  secondary={{
+                    id: 'secondaryId', 
+                    label: 'Store location',
+                    value: inputID,
+                    onChange: (e) => {setInputID(e)},
+                    placeholder: 'Example: 1234567900',
+                  }}
+                  error={error}
+                  />
               </Stack.Item> 
             }
             </Stack>

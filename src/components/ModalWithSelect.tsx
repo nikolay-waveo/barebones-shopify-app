@@ -1,16 +1,12 @@
 import * as polaris from '@shopify/polaris';
 import {
-  Form,
-  FormLayout,
-  InlineError,
-  Select,
   Stack,
   TextContainer,
-  TextField,
   Toast
 } from '@shopify/polaris';
 import React, { useCallback, useState } from 'react';
 import useAsyncState from '../hooks/useAsyncState';
+import Form from './Form';
 
 declare type Type = 'text' | 'email' | 'number' | 'password' | 'search' | 'tel' | 'url' | 'date' | 'datetime-local' | 'month' | 'time' | 'week' | 'currency';
 
@@ -155,40 +151,32 @@ const ModalWithSelect: React.FC<IModalWithSelect> = ({
               </Stack.Item>
             { inputAction &&
               <Stack.Item fill>
-                <Form onSubmit={handleSubmit}>
-                  <FormLayout>
-                    
-                    <TextField
-                      id={id}
-                      label={label}
-                      value={input}
-                      onChange={(e) => {
-                        setError(false)
-                        setInput(e)
-                      }}
-                      autoComplete="off"
-                      placeholder={placeholder}
-                      type={type}
-                      error={error}
-                      requiredIndicator={required}
-                      />
-
-                    { error && 
-                      <div className='mt-4'>
-                        <InlineError message={errorMessage} fieldID={id} />
-                      </div> 
-                    }
-
-                    <Select 
-                      label="Store Location" 
-                      options={options}
-                      onChange={handleSelectChange} 
-                      value={selected}
-                      />
-
-                  </FormLayout>
-                </Form>
-
+                <Form
+                  select
+                  submit={handleSubmit}
+                  primary={{
+                    id: id, 
+                    label: label,
+                    value: input,
+                    onChange: (e) => {
+                      setInput(e)
+                      setError(false)
+                    },
+                    placeholder: placeholder,
+                    type: type,
+                    errorMessage: errorMessage,
+                    required: true,
+                  }}
+                  secondary={{
+                    id: 'secondaryId', 
+                    label: 'Store location',
+                    value: selected,
+                    onChange: handleSelectChange,
+                    placeholder: 'Example: 1234567900',
+                    options: options,
+                  }}
+                  error={error}
+                  />
               </Stack.Item> 
             }
             </Stack>
