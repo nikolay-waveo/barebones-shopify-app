@@ -36,8 +36,7 @@ interface ISubscribeSection {
   closeAddToListModal: () => void,
   setShowAddToListModal: Dispatch<SetStateAction<boolean>>,
 
-  addToSubscribedToListHandler: (store: TStore) => void,
-
+  addToSubscribedToListHandler: (store: TStore) => Promise<boolean>,
 }
 
 const SubscribeSection: FC<ISubscribeSection> = ({
@@ -178,7 +177,7 @@ const SubscribeSection: FC<ISubscribeSection> = ({
               }}
               toast={{
                 content: "Request Sent",
-              }}/>
+              }} />
         }
     </Section>
   );

@@ -28,7 +28,7 @@ interface IModal {
     actionHandler: (input: {
       url: string,
       id: string,
-    }) => void,
+    }) => Promise<boolean>,
     destructive?: boolean,
   }
   secondaryActions?: {
@@ -57,19 +57,25 @@ const Modal: React.FC<IModal> = ({
   const [input, setInput] = useState('')
   const [showToast, setShowToast] = useState(false)
   const [error, setError] = useAsyncState(false)
+  const [hasError, setHasError] = useAsyncState(false)
   const [inputID, setInputID] = useState("")
 
   const toggleShowToast = useCallback(() => setShowToast(false), []);
   const handleChange = useCallback(() => modalHandler(!isModalOpen), [isModalOpen, modalHandler]);
   const handleSubmit = () => {
-    const hasError = inputAction.errorHandler(input)
-    setError(hasError)
-    if (!hasError) {
-      primaryAction.actionHandler({url: input, id: inputID}) 
-      setInput('')
-      handleChange()
-      setShowToast(true)
-      setError(false)
+    const isError = inputAction.errorHandler(input)
+    setError(isError)
+    if (!isError) {
+      primaryAction.actionHandler({url: input, id: inputID})
+        .then(err => {
+          setHasError(err)
+          if(!err) {
+            setInput('')
+            handleChange()
+            setShowToast(true)
+            setError(false)
+          }
+        })
     }
   }
 
@@ -132,7 +138,9 @@ const Modal: React.FC<IModal> = ({
                     },
                     placeholder: 'Example: store.myshopify.com',
                     type: 'text',
-                    errorMessage: 'Invalid input',
+                    errorMessage: hasError 
+                      ? "Store hasn't enabled publishing. Please contact the merchant to proceed"
+                      : 'Invalid input',
                     required: true,
                   }}
                   secondary={{
@@ -142,7 +150,7 @@ const Modal: React.FC<IModal> = ({
                     onChange: (e) => {setInputID(e)},
                     placeholder: 'Example: 1234567900',
                   }}
-                  error={error}
+                  error={error || hasError}
                   />
               </Stack.Item> 
             }

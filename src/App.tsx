@@ -29,6 +29,8 @@ const App: FC<IAppProps> = ({
   installed,
 }) => {
 
+  const appName = 'Products Pub/Sub'
+
   const [user] = useState(shopOrigin)
   const [postInstall, setPostInstall] = useState(installed)
   const [publishedTo, setPublishedTo] = useState<TSubscription['subscription'][]>([]);
@@ -169,7 +171,7 @@ const App: FC<IAppProps> = ({
       id,
     } = store
 
-    useUpdateSubscription({
+    return useUpdateSubscription({
       origin: user,
       shop: url,
       id: id,
@@ -183,6 +185,7 @@ const App: FC<IAppProps> = ({
       if(code) {
         setErrorMessage(errorCodeToMessage(code))
         setHasError(true)
+        return true
       } else {
         setSubscribedTo([
           ...subscribedTo,
@@ -192,6 +195,7 @@ const App: FC<IAppProps> = ({
             status: status,
           }
         ])
+        return false
       } 
     })
   }
@@ -267,9 +271,9 @@ const App: FC<IAppProps> = ({
   const openAddToListModal = (): void => setShowAddToListModal(true)
   const closeAddToListModal = (): void => setShowAddToListModal(false)
   
-  useEffect(() => {
-    setPublishMode(publishMode)
-  }, [publishMode])
+  // useEffect(() => {
+  //   setPublishMode(publishMode)
+  // }, [publishMode])
 
   const handlePublish = useCallback(() => {
     if (isPublishActive) {
@@ -327,12 +331,89 @@ const App: FC<IAppProps> = ({
     publishedTo.forEach(store => onPublishDisconnect(store))
   }, [])
 
+  //? ---------------------------------------------------------------------------------------------------------------
+
+  //! swap out publishMode
+
+  const __handleActivate = useCallback(() => {
+    useUpdatePublishStatus({
+      origin: user,
+      publish: true,
+      // pause: false,
+    })
+    .then(({publish, pause}): void => {
+        setIsPublishActive(publish)
+        setIsPublishPaused(pause || !publish)
+      })
+      .then(() => console.log('pub'))
+  }, [])
+
+  const __handleDeactivate = useCallback(() => {
+    useUpdatePublishStatus({
+      origin: user,
+      publish: false, 
+      // pause: false
+    })
+    .then(({publish, pause}): void => {
+      setIsPublishActive(publish)
+      setIsPublishPaused(pause)
+    })
+    .then(() => {
+      closeDeactivatePublishModal()
+    })
+  }, [])
+
+  const __handleDisconnectAll = useCallback(() => {
+    publishedTo.forEach(store => onPublishDisconnect(store))
+    useUpdatePublishStatus({
+      origin: user,
+      publish: false,
+      // pause: false,
+    })
+    .then(({publish, pause}): void => {
+      setIsPublishActive(publish)
+      setIsPublishPaused(pause)
+    })
+    .then(() => {
+      closeDisconnectAllModal()
+    })
+  }, [])
+
+  const __handlePause = useCallback(() => {
+    useUpdatePublishStatus({
+      origin: user,
+      publish: isPublishPaused,
+      // pause, !isPublishPaused,
+    })
+    .then(({publish, pause}): void => {
+      setIsPublishActive(publish)
+      setIsPublishPaused(pause)
+    })
+  }, [user, isPublishPaused])
+
+  //? ---------------------------------------------------------------------------------------------------------------
+
+  const a = () => console.log('clicker click')
+
   return (
     <Frame>
       { postInstall
-        ? <SetUpSection onFinish={() => setPostInstall(false)} />
+        ? <SetUpSection 
+            appName={appName}
+            onFinish={() => setPostInstall(false)} 
+            actions={[
+              {
+                actionName: 'publishing',
+                actionHandler: __handleActivate,
+              },
+              {
+                actionName: 'subscribing',
+                actionHandler: a,
+                state: true,
+              },
+            ]} />
         : <Page
-            title="Store Product Sync"
+            title={appName}
             fullWidth={true}>
 
             <div className="grid grid-cols-1 gap-10 mb-20">
@@ -369,7 +450,7 @@ const App: FC<IAppProps> = ({
                 setShowDeactivatePublishModal={setShowDeactivatePublishModal}
                 />
 
-              <SubscribeSection 
+              <SubscribeSection
                 subscribedTo={subscribedTo}
                 locations={locations}
               

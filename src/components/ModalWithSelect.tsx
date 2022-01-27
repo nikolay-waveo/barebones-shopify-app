@@ -34,7 +34,7 @@ interface IModal {
     actionHandler: (input: {
       url: string,
       id: string,
-    }) => void,
+    }) => Promise<boolean>,
     destructive?: boolean,
   }
   secondaryActions?: {
@@ -62,27 +62,34 @@ const ModalWithSelect: React.FC<IModalWithSelect> = ({
   primaryAction,
   secondaryActions,
   toast,
-  locations
+  locations,
 }) => {
 
   const [locationList] = useState<TLocation[]>(locations)
   const [input, setInput] = useState('')
   const [showToast, setShowToast] = useState(false)
   const [error, setError] = useAsyncState(false)
+  const [hasError, setHasError] = useAsyncState(false)
+
   const [selected, setSelected] = useState(locationList[0].id)
 
   const toggleShowToast = useCallback(() => setShowToast(false), []);
   const handleChange = useCallback(() => modalHandler(!isModalOpen), [isModalOpen, modalHandler]);
   const handleSelectChange = useCallback((value) => { setSelected(value) }, []);
   const handleSubmit = () => {
-    const hasError = errorHandler(input)
-    setError(hasError)
-    if (!hasError) {
-      primaryAction.actionHandler({url: input, id: selected}) 
-      setInput('')
-      handleChange()
-      setShowToast(true)
-      setError(false)
+    const isError = errorHandler(input)
+    setError(isError)
+    if (!isError) {
+      primaryAction.actionHandler({url: input, id: selected})
+        .then(err => {
+          setHasError(err)
+          if(!err) {
+            setInput('')
+            handleChange()
+            setShowToast(true)
+            setError(false)
+          }
+        })
     }
   }
 
@@ -164,7 +171,9 @@ const ModalWithSelect: React.FC<IModalWithSelect> = ({
                     },
                     placeholder: placeholder,
                     type: type,
-                    errorMessage: errorMessage,
+                    errorMessage: hasError
+                      ? "Store hasn't enabled publishing. Please contact the merchant to proceed"
+                      : errorMessage,
                     required: true,
                   }}
                   secondary={{
@@ -175,7 +184,7 @@ const ModalWithSelect: React.FC<IModalWithSelect> = ({
                     placeholder: 'Example: 1234567900',
                     options: options,
                   }}
-                  error={error}
+                  error={error || hasError}
                   />
               </Stack.Item> 
             }
