@@ -10,6 +10,7 @@ interface IItem {
     storeURL: string,
     id: string,
     status: string,
+    updatedAt: string,
   },
   badges?: {
     status: string,

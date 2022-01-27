@@ -16,6 +16,7 @@ type TSubscription = {
     storeURL: string,
     id: string,
     status: string,
+    updatedAt: string,
   },
 }
 
@@ -78,11 +79,13 @@ const App: FC<IAppProps> = ({
         shop,
         inventoryLocationId,
         status,
+        updatedAt,
       }) => {
         return ({
           storeURL: shop,
           id: inventoryLocationId,
           status: status,
+          updatedAt: updatedAt,
         })
       }) || []
       setPublishedTo(publishedToData)
@@ -92,11 +95,13 @@ const App: FC<IAppProps> = ({
         shop,
         inventoryLocationId,
         status,
+        updatedAt
       }) => {
         return ({
           storeURL: shop,
           id: inventoryLocationId,
           status: status,
+          updatedAt: updatedAt
         })
       }) || []
       setSubscribedTo(subscribedToData) 
@@ -180,6 +185,7 @@ const App: FC<IAppProps> = ({
       shop,
       inventoryLocationId,
       status,
+      updatedAt,
       code,
     }) => {
       if(code) {
@@ -193,6 +199,7 @@ const App: FC<IAppProps> = ({
             storeURL: shop,
             id: inventoryLocationId,
             status: status,
+            updatedAt: updatedAt
           }
         ])
         return false
@@ -421,7 +428,14 @@ const App: FC<IAppProps> = ({
                 user={user}
                 hasError={hasError}
                 errorMessage={errorMessage}
-                publishedTo={publishedTo}
+                publishedTo={[
+                  {
+                    status: 'active',
+                    storeURL: 'test',
+                    id: '0000',
+                    updatedAt: '2022-01-25T16:10:19.120Z',
+                  }
+                ]}
                 isPublishActive={isPublishActive}
                 isPublishPaused={isPublishPaused}
 
@@ -451,7 +465,14 @@ const App: FC<IAppProps> = ({
                 />
 
               <SubscribeSection
-                subscribedTo={subscribedTo}
+                subscribedTo={[
+                  {
+                    status: 'active',
+                    storeURL: 'test',
+                    id: '0000',
+                    updatedAt: '2022-01-25T16:10:19.120Z',
+                  }
+                ]}
                 locations={locations}
               
                 onSubscribeDisconnect={onSubscribeDisconnect}

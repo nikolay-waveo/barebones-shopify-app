@@ -19,6 +19,7 @@ type TSubscription = {
     storeURL: string,
     id: string,
     status: string,
+    updatedAt: string,
   },
 }
 
