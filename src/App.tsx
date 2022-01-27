@@ -352,7 +352,6 @@ const App: FC<IAppProps> = ({
         setIsPublishActive(publish)
         setIsPublishPaused(pause || !publish)
       })
-      .then(() => console.log('pub'))
   }, [])
 
   const __handleDeactivate = useCallback(() => {
@@ -368,6 +367,11 @@ const App: FC<IAppProps> = ({
     .then(() => {
       closeDeactivatePublishModal()
     })
+  }, [])
+
+  const __handleToggle = useCallback((state: boolean) => {
+    if (state) __handleActivate()
+    else __handleDeactivate()
   }, [])
 
   const __handleDisconnectAll = useCallback(() => {
@@ -400,8 +404,6 @@ const App: FC<IAppProps> = ({
 
   //? ---------------------------------------------------------------------------------------------------------------
 
-  const a = () => console.log('clicker click')
-
   return (
     <Frame>
       { postInstall
@@ -411,11 +413,11 @@ const App: FC<IAppProps> = ({
             actions={[
               {
                 actionName: 'publishing',
-                actionHandler: __handleActivate,
+                actionHandler: __handleToggle,
               },
               {
                 actionName: 'subscribing',
-                actionHandler: a,
+                actionHandler: () => {},
                 state: true,
               },
             ]} />
@@ -468,6 +470,24 @@ const App: FC<IAppProps> = ({
                 subscribedTo={[
                   {
                     status: 'active',
+                    storeURL: 'test',
+                    id: '0000',
+                    updatedAt: '2022-01-25T16:10:19.120Z',
+                  },
+                  {
+                    status: 'pending',
+                    storeURL: 'test',
+                    id: '0000',
+                    updatedAt: '2022-01-25T16:10:19.120Z',
+                  },
+                  {
+                    status: 'stopped',
+                    storeURL: 'test',
+                    id: '0000',
+                    updatedAt: '2020-01-25T16:10:19.120Z',
+                  },
+                  {
+                    status: 'declined',
                     storeURL: 'test',
                     id: '0000',
                     updatedAt: '2022-01-25T16:10:19.120Z',
