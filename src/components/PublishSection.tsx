@@ -5,12 +5,14 @@ import {
   PlayMinor,
   PauseMinor,
 } from '@shopify/polaris-icons';
-import { FC, Dispatch, SetStateAction } from 'react';
+import { FC, Dispatch, SetStateAction, useState, useEffect } from 'react';
 import Item from './Item';
 import List from './List';
 import Modal from './Modal';
 import Section from './Section';
 import StorePublishingCard from './StorePublishingCard';
+
+type TPublishState = 'active' | 'disabled' | 'paused'
 
 type TSubscription = {
   subscription: {
@@ -29,7 +31,10 @@ interface IPublishSection {
   isPublishPaused: boolean,
   
   handlePause: () => void,
-  handlePublish: () => void,
+  // handleActivate: () => void,
+  // handleDeactivate: () => void,
+  // handleDisconnectAll: () => void,
+  handlePublish: () => void, //!
   toggleHasError: () => void,
   onCopyToClipboard: (id: string) => void,
   onPublishConnect: (item: TSubscription['subscription']) => void,
@@ -43,13 +48,13 @@ interface IPublishSection {
   showDisconnectAllModal: boolean,
   openDisconnectAllModal: () => void,
   closeDisconnectAllModal: () => void,
-  handleDisconnectAllModal: () => void,
+  handleDisconnectAllModal: () => void, //!
   setShowDisconnectAllModal: Dispatch<SetStateAction<boolean>>,
 
   showDeactivatePublishModal: boolean,
   openDeactivatePublishModal: () => void,
   closeDeactivatePublishModal: () => void,
-  handleDeactivatePublishModal: () => void,
+  handleDeactivatePublishModal: () => void, //!
   setShowDeactivatePublishModal: Dispatch<SetStateAction<boolean>>,
 }
 
@@ -58,11 +63,14 @@ const PublishSection: FC<IPublishSection> = ({
   hasError,
   errorMessage,
   publishedTo,
-  isPublishActive,
-  isPublishPaused,
+  isPublishActive: isActive,
+  isPublishPaused: isPaused,
   
   handlePause,
-  handlePublish,
+  // handleActivate,
+  // handleDeactivate,
+  // handleDisconnectAll,
+  handlePublish, //!
   toggleHasError,
   onCopyToClipboard,
   onPublishConnect,
@@ -76,15 +84,33 @@ const PublishSection: FC<IPublishSection> = ({
   showDisconnectAllModal,
   openDisconnectAllModal,
   closeDisconnectAllModal,
-  handleDisconnectAllModal,
+  handleDisconnectAllModal, //!
   setShowDisconnectAllModal,
 
   showDeactivatePublishModal,
   openDeactivatePublishModal,
   closeDeactivatePublishModal,
-  handleDeactivatePublishModal,
+  handleDeactivatePublishModal, //!
   setShowDeactivatePublishModal,
 }) => {
+
+  const [listHasItems, setListHasItems] = useState(publishedTo.length > 0)
+
+  useEffect(() => {
+    setListHasItems(publishedTo.length > 0)
+  }, [publishedTo])
+
+  const getPublishState = (
+    publish: boolean, 
+    pause: boolean,
+    listHasItems: boolean,
+  ): TPublishState => {
+    if (publish && pause && listHasItems) return 'paused'
+    if (!publish) return 'disabled'
+    return 'active'
+  }
+
+  const publishState = getPublishState( isActive, isPaused, listHasItems )
 
   return (
     <Section
@@ -92,75 +118,70 @@ const PublishSection: FC<IPublishSection> = ({
       sectionDescription="See which stores are subscribed to you." >
 
       <StorePublishingCard
-        activated={!isPublishActive}
-        primary={isPublishActive
-          && {
+        activated={isActive}
+        primary={isActive
+          ? {
               content: "Link",
               onAction: openCalloutCardModal, 
               primary: true,   
-            }}
-        onActivate={{
-          title: <>Store Publishing <span className="text-red-600">(Disabled)</span></>,
+            } 
+          : null
+        }
+        onDeactivated={{
+          title: <>Store Publishing <span className="text-red-600 capitalize">({publishState})</span></>,
           buttonTitle: "Activate",
           content: "Allow others to find and subscribe to your store.",
           defaultButton: {
             content: 'Activate', 
             icon: TickMinor,
-            onAction: handlePublish
+            onAction: handlePublish //handleActivate
           }
         }}
-        onDeactivate={
-          publishedTo.length > 0
-          ? {
-            title: <>Store Publishing <span className={isPublishPaused ? 'text-cyan-600': 'text-green-600'}>
-              ({isPublishPaused ? 'Paused' : 'Active'})
-              </span></>,
-            buttonTitle: "Options",
-            content: "Share your store with others, pause publishing or disconnect all stores currently subscribed to you.",
-            sections: [{
-              title: 'Publish options',
-              items: [
-                {
-                  content: isPublishPaused
-                    ? 'Resume' 
-                    : 'Pause',
-                  active: isPublishPaused,
-                  icon: isPublishPaused 
-                    ? PlayMinor
-                    : PauseMinor,
-                  onAction: handlePause
-                },
-                {
-                  destructive: true,
-                  content: 'Disconnect All',
-                  icon: CancelSmallMinor,
-                  onAction: openDisconnectAllModal
-                },
-              ],
-            }],
-          }
-        : {
-          title: <>Store Publishing <span className="text-green-600">(Active)</span></>,
+        onActivated={{
+          title: <>Store Publishing <span className={(isPaused ? 'text-cyan-600': 'text-green-600') + ' capitalize'}>
+            ({publishState})
+            </span></>,
           buttonTitle: "Options",
-          content: "Share your store with others or disable publishing.",
+          content: isPaused
+            ? "Share your store with others, pause publishing or disconnect all stores currently subscribed to you."
+            : "Share your store with others or disable publishing.",
           sections: [{
             title: 'Publish options',
-            items: [
-              {
-                destructive: true,
-                content: 'Deactivate',
-                icon: CancelSmallMinor,
-                onAction: openDeactivatePublishModal
-              },
-            ],
+            items: listHasItems
+              ? [
+                  {
+                    content: isPaused
+                      ? 'Resume' 
+                      : 'Pause',
+                    active: isPaused,
+                    icon: isPaused
+                      ? PlayMinor
+                      : PauseMinor,
+                    onAction: handlePause // handlePause
+                  },
+                  {
+                    destructive: true,
+                    content: 'Disconnect All',
+                    icon: CancelSmallMinor,
+                    onAction: openDisconnectAllModal
+                  },
+                ]
+              : [
+                  {
+                    destructive: true,
+                    content: 'Deactivate',
+                    icon: CancelSmallMinor,
+                    onAction: openDeactivatePublishModal
+                  },
+                ]
           }],
-          }} />
+        }} />
 
-      { isPublishActive && 
+      { isActive && 
         <List
           list={publishedTo}
           listText={{
-            title: isPublishPaused 
+            title: isPaused 
               ? <>Subscribers <span className="text-cyan-600">(Paused)</span></>
               : "Subscribers",
             description: "You can connect, disconnect and track subscriptions to your store.",
@@ -182,14 +203,14 @@ const PublishSection: FC<IPublishSection> = ({
                   badges={[
                     {
                       status: "pending",
-                      tooltip: "Awaiting confirmation",
+                      tooltip: "Pending publisher approval",
                       statusStyle: "new",
                     },
                     {
                       status: "active",
-                      displayStatus: isPublishPaused ? "paused" : "active",
-                      tooltip: isPublishPaused ? "Publishing is currently paused" : "An active subscription",
-                      statusStyle: isPublishPaused ? "info" : "success",
+                      displayStatus: publishState,
+                      tooltip: isPaused ? "Publishing is paused" : "Merchant is subscribed to your store",
+                      statusStyle: isPaused ? "info" : "success",
                     },
                   ]}
                   options={[
@@ -224,7 +245,7 @@ const PublishSection: FC<IPublishSection> = ({
         modalHandler={setShowDisconnectAllModal} 
         primaryAction={{
           actionText: "Disconnect All",
-          actionHandler: handleDisconnectAllModal,
+          actionHandler: handleDisconnectAllModal, // handleDisconnectAll
           destructive: true
         }}
         secondaryActions={[
@@ -245,7 +266,7 @@ const PublishSection: FC<IPublishSection> = ({
         modalHandler={setShowDeactivatePublishModal} 
         primaryAction={{
           actionText: "Deactivate",
-          actionHandler: handleDeactivatePublishModal,
+          actionHandler: handleDeactivatePublishModal, // handleDeactivate
           destructive: true
         }}
         secondaryActions={[
@@ -277,7 +298,10 @@ const PublishSection: FC<IPublishSection> = ({
             actionText: "Cancel",
             actionHandler: closeCalloutCardModal,
           },
-        ]} />
+        ]}
+        toast={{
+          content: "Link Copied"
+        }} />
       
     </Section>
   );
