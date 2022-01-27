@@ -206,12 +206,16 @@ const PublishSection: FC<IPublishSection> = ({
                       status: "pending",
                       tooltip: "Pending publisher approval",
                       statusStyle: "new",
+                      dateTooltip: 'Pending approval',
+                      progress: 'incomplete',
                     },
                     {
                       status: "active",
                       displayStatus: publishState,
                       tooltip: isPaused ? "Publishing is paused" : "Merchant is subscribed to your store",
                       statusStyle: isPaused ? "info" : "success",
+                      dateTooltip: 'Active subscription',
+                      progress: 'complete',
                     },
                   ]}
                   options={[

@@ -86,21 +86,29 @@ const SubscribeSection: FC<ISubscribeSection> = ({
                       status: "pending",
                       tooltip: "Pending publisher approval",
                       statusStyle: "new",
+                      dateTooltip: 'Pending approval',
+                      progress: 'incomplete',
                     },
                     {
                       status: "active",
                       tooltip: "Your subscription is active",
                       statusStyle: "success",
+                      dateTooltip: 'Active subscription',
+                      progress: 'complete',
                     },
                     {
                       status: "stopped",
                       tooltip: "Subscription canceled by publisher",
                       statusStyle: "critical",
+                      dateTooltip: 'Subscription stopped',
+                      progress: 'partiallyComplete',
                     },
                     {
                       status: "declined",
                       tooltip: "Subscription declined by publisher",
                       statusStyle: "warning",
+                      dateTooltip: 'Subscription declined',
+                      progress: 'partiallyComplete',
                     },
                   ]}
                   options={[
