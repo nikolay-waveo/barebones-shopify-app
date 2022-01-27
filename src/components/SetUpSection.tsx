@@ -1,10 +1,8 @@
-import { Button } from '@shopify/polaris';
-import { FC, useCallback, useEffect, useRef, useState } from 'react';
+import { FC } from 'react';
 import SetUpInstructions from './SetUpInstructions';
 import img1 from '../assets/Pubsub-asset-1.png'
+import img2 from '../assets/Pubsub-asset-2.png'
 import img3 from '../assets/Pubsub-asset-3.png'
-import img9 from '../assets/Pubsub-asset-9.png'
-import Form from './Form';
 import PublishingPage from './PublishingPage';
 import SubscribingPage from './SubscribingPage';
 
@@ -66,7 +64,7 @@ const SetUpSection: FC<ISetUpSection> = ({
           },
           {
             img: {
-              src: img3,
+              src: img2,
               alt: 'Publishing graphic',
             },
             title: (
@@ -82,7 +80,7 @@ const SetUpSection: FC<ISetUpSection> = ({
           },
           {
             img: {
-              src: img9,
+              src: img3,
               alt: 'Subscription list graphic',
             },
             title: (
