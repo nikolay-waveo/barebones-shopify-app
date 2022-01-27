@@ -1,12 +1,12 @@
 import { Button } from '@shopify/polaris';
 import { FC, useState } from 'react';
 
-type TAction = {
+type TPubAction = {
   actionHandler: (e?: any) => void,
 }
 
 interface IPublishingPage {
-  action: TAction
+  action: TPubAction
 }
 
 const PublishingPage: FC<IPublishingPage> = ({
@@ -26,7 +26,8 @@ const PublishingPage: FC<IPublishingPage> = ({
       <div>
         <Button 
           fullWidth 
-          primary={!publishing} 
+          primary={!publishing}
+          destructive={publishing}
           onClick={() => {
             actionHandler(!publishing)
             setPublishing(!publishing)

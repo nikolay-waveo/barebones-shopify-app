@@ -10,8 +10,8 @@ import SubscribingPage from './SubscribingPage';
 
 type TAction = {
   actionName: string,
-  actionHandler: (e?: any) => void,
-  state?: boolean,
+  actionHandler: (e?: any) => any,
+  assets?: any
 }
 
 interface ISetUpSection {
@@ -30,13 +30,6 @@ const SetUpSection: FC<ISetUpSection> = ({
     const actionObject = actions.find(action => action.actionName === actionName)
     return actionObject
   }
-
-  const locations = [
-    {
-      name: '1',
-      id: '1'
-    }
-  ]
 
   return (
     <SetUpInstructions 
@@ -99,7 +92,7 @@ const SetUpSection: FC<ISetUpSection> = ({
                 </h2>
               </div>
             ),
-            content: <SubscribingPage action={actionFromName('subscribing')} locations={locations}/>,
+            content: <SubscribingPage action={actionFromName('subscribing')} locations={actionFromName('subscribing').assets}/>,
             prevLabel: 'Back',
             nextLabel: 'Continue without subscribing',
           },

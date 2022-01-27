@@ -1,8 +1,10 @@
-import { FC, useState } from 'react';
+import { Toast } from '@shopify/polaris';
+import { FC, useCallback, useState } from 'react';
+import useAsyncState from '../hooks/useAsyncState';
 import Form from './Form';
 
-type TAction = {
-  actionHandler: (e?: any) => void,
+type TSubAction = {
+  actionHandler: (e?: any) => Promise<boolean>,
 }
 
 type TLocation = {
@@ -11,26 +13,65 @@ type TLocation = {
 }
 
 interface ISubscribingPage {
-  action: TAction,
+  action: TSubAction,
   locations: TLocation[]
 }
 
 const SubscribingPage: FC<ISubscribingPage> = ({
   action,
-  locations
+  locations = []
 }) => {
 
-  const [ primaryInput, setPrimaryInput ] = useState('')
-  const [ secondaryInput, setSecondaryInput ] = useState('')
+  const isLocationsEmpty = !(locations.length)
+  console.log(isLocationsEmpty)
+  const initId = isLocationsEmpty ? '' : locations[0].id
 
-  const options = [
-    ...locations.map(location => {
-      return {
-        label: location.name,
-        value: location.id
-      }
-    })
-  ]
+  const [ primaryInput, setPrimaryInput ] = useState('')
+  const [ secondaryInput, setSecondaryInput ] = useState(initId)
+  const [ error, setError ] = useAsyncState(false)
+  const [ hasError, setHasError ] = useAsyncState(false)
+  const [ showToast, setShowToast ] = useState(false)
+
+  const options = isLocationsEmpty
+  ? []
+  : [
+      ...locations.map(location => {
+        return {
+          label: location.name,
+          value: location.id
+        }
+      })
+    ]
+
+  const toggleShowToast = useCallback(() => setShowToast(false), []);
+
+  const errorHandler = (input: string): boolean => {
+    const storeURLPattern = /^(\w+-)*\w+(.myshopify.com)$/
+    if(!input) return true
+    return !storeURLPattern.test(input) 
+  }
+
+  const handleSubmit = () => {
+    const isError = errorHandler(primaryInput)
+    setError(isError)
+    if (!isError) {
+      action.actionHandler({url: primaryInput, id: secondaryInput})
+        .then(err => {
+          console.log(err)
+          setHasError(err)
+          if(!err) {
+            setPrimaryInput('')
+            setShowToast(true)
+            setError(false)
+          }
+        })
+    }
+  }
+
+  const toastMarkup = (<Toast 
+    content="Subscribed"
+    onDismiss={toggleShowToast} />) 
+
   
   return (
     <div className='flex flex-col space-y-10 text-emerald-800'>
@@ -39,8 +80,8 @@ const SubscribingPage: FC<ISubscribingPage> = ({
       </p>
       <div>
         <Form
-          select
-          submit={action.actionHandler}
+          select={!isLocationsEmpty}
+          submit={handleSubmit}
           submitButton={{
             content: 'Subscribe',
             primary: true,
@@ -55,7 +96,9 @@ const SubscribingPage: FC<ISubscribingPage> = ({
             },
             placeholder: 'Example: store.myshopify.com',
             type: 'text',
-            errorMessage: '',
+            errorMessage: hasError 
+              ? "Store hasn't enabled publishing. Please contact the merchant to proceed"
+              : 'Invalid input',
             required: true,
           }}
           secondary={{
@@ -68,12 +111,13 @@ const SubscribingPage: FC<ISubscribingPage> = ({
             placeholder: 'Example: 12345678900',
             options: options
           }}
-          error={false}
+          error={error || hasError}
           />
           <p className='text-center mt-4'>
             You can always change this later in the subscribe section.
           </p>
         </div>
+        {showToast && toastMarkup}
     </div>
   );
 };

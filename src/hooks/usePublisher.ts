@@ -13,10 +13,12 @@ interface IPublisherProps {
   shop?: string,
   accept?: boolean,
   publish?: boolean,
+  pause?: boolean,
 }
 
 interface TShopSettingsResult {
   publish: boolean,
+  // pause: boolean,
   published?: Array<TShop>;
   subscribed?: Array<TShop>;
 }
@@ -57,7 +59,8 @@ function useGETPublisher({
 
 async function usePOSTPublisher({
   origin,
-  publish
+  publish,
+  // pause,
 }: IPublisherProps
 ): Promise<any> {
 
@@ -68,6 +71,7 @@ async function usePOSTPublisher({
     },
     body: JSON.stringify({
       publish: publish
+      // pause: pause
     })
   }
 
@@ -77,7 +81,7 @@ async function usePOSTPublisher({
 async function usePUTPublisher({
   origin,
   shop,
-  accept
+  accept,
 }: IPublisherProps
 ): Promise<any> {
 
