@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc && vite build --base=/products-pubsub-app-dev/",
     "preview": "vite preview",
     "tailwind": "npx tailwindcss -i ./src/styles/input.css -o ./src/styles/tailwind.css --watch"
   },
