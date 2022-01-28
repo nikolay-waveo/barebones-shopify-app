@@ -45,7 +45,7 @@ const SetUpSection: FC<ISetUpSection> = ({
                   Welcome to the Perkd {appName} app
                 </h2>
                 <h3 className='text-2xl font-medium text-emerald-800 text-center'>
-                  Set-up shop once, sell anywhere
+                  Placeholder tag line
                 </h3>
               </div>
             ),

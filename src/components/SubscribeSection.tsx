@@ -60,8 +60,8 @@ const SubscribeSection: FC<ISubscribeSection> = ({
       <List
         list={subscribedTo}
         listText={{
-          title: "Subscriptions",
-          description: "A list of all of your subscriptions to other stores.",
+          title: "Your subscriptions",
+          description: "A list of all of your product subscriptions to other stores.",
         }}
         emptyListText={{
           title: "No subscriptions yet",

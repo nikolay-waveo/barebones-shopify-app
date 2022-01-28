@@ -129,9 +129,9 @@ const PublishSection: FC<IPublishSection> = ({
           : null
         }
         onDeactivated={{
-          title: <>Store Publishing <span className="text-red-600 capitalize">({publishState})</span></>,
+          title: <>Publish your products <span className="text-red-600 capitalize">({publishState})</span></>,
           buttonTitle: "Activate",
-          content: "Allow others to find and subscribe to your store.",
+          content: "Allow others to find and subscribe to the products of your store.",
           defaultButton: {
             content: 'Activate', 
             icon: TickMinor,
@@ -139,7 +139,7 @@ const PublishSection: FC<IPublishSection> = ({
           }
         }}
         onActivated={{
-          title: <>Store Publishing <span className={(isPaused ? 'text-cyan-600': 'text-green-600') + ' capitalize'}>
+          title: <>Publish your products <span className={(isPaused ? 'text-cyan-600': 'text-green-600') + ' capitalize'}>
             ({publishState})
             </span></>,
           buttonTitle: "Options",

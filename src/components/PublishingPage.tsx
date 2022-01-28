@@ -25,7 +25,7 @@ const PublishingPage: FC<IPublishingPage> = ({
       </p>
       <div>
         <Button 
-          fullWidth 
+          fullWidth
           primary={!publishing}
           destructive={publishing}
           onClick={() => {
