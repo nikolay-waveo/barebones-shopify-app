@@ -83,12 +83,15 @@ const Form: FC<IForm> = ({
               autoComplete="off"
               />
         }
-        <Button 
-          fullWidth={submitButton.fullWidth} 
-          primary={submitButton.primary} 
-          submit>
-            {submitButton.content}
-        </Button>
+        
+        { submitButton && 
+          <Button 
+            fullWidth={submitButton.fullWidth} 
+            primary={submitButton.primary} 
+            submit>
+              {submitButton.content}
+          </Button>
+        }
       </FormLayout>
     </polaris.Form>
   );
