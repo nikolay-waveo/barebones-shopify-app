@@ -1,38 +1,58 @@
 import * as polaris from '@shopify/polaris';
 import {
-  Button,
-  InlineError,
   Stack,
   TextContainer,
-  TextField,
   Toast
 } from '@shopify/polaris';
-import React, { useCallback, useState } from 'react';
+import { FC, useCallback, useState } from 'react';
 import useAsyncState from '../hooks/useAsyncState';
+import Form from './Form';
 
 declare type Type = 'text' | 'email' | 'number' | 'password' | 'search' | 'tel' | 'url' | 'date' | 'datetime-local' | 'month' | 'time' | 'week' | 'currency';
 
-interface IModal {
+type TSelection = {
+  label: string,
+  value: string
+}
+
+interface IFormModal {
+  form?: {
+    primary: {
+      id: string,
+      label: string,
+      placeholder: string,
+      type?: Type,
+      required?: boolean,
+      error?: {
+        content: string,
+        onError?: (input: string) => boolean,
+      }
+    },
+    secondary: {
+      id: string,
+      label: string,
+      placeholder: string,
+      type?: Type,
+      required?: boolean,
+      selection?: TSelection[]
+    }
+    submit: (input: any) => Promise<any>,
+  }
+}
+
+interface IModal extends IFormModal {
   title: string,
   content: React.ReactNode | string,
   isModalOpen: boolean,
   modalHandler: React.Dispatch<React.SetStateAction<boolean>>,
-  inputAction?: {
-    id: string,
-    label: string,
-    placeholder: string,
-    type?: Type,
-    errorMessage?: string,
-    errorHandler?: (input: string) => boolean,
-  }
   primaryAction: {
-    actionText: string, 
-    actionHandler: (input: string) => void,
+    content: string, 
+    onAction: () => void,
     destructive?: boolean,
   }
   secondaryActions?: {
-    actionText: string, 
-    actionHandler: (input: string) => void,
+    content: string, 
+    onAction: () => void,
     destructive?: boolean,
   }[],
   toast?: {
@@ -42,131 +62,139 @@ interface IModal {
   },
 }
 
-const Modal: React.FC<IModal> = ({
+const Modal: FC<IModal> = ({
   title,
   content,
   isModalOpen,
   modalHandler,
-  inputAction,
+  form,
   primaryAction,
   secondaryActions,
-  toast,
+  toast: toastObject,
 }) => {
+  const isSelectionEmpty = !form?.secondary.selection?.length
+  const secondaryInit = isSelectionEmpty ? '' : form.secondary.selection[0].value
+  const selectionInit = isSelectionEmpty ? [] : form.secondary.selection
 
-  const [input, setInput] = useState('')
-  const [showToast, setShowToast] = useState(false)
+  const [toast, setToast] = useState(false)
+  const [error, setError] = useAsyncState(false)
   const [hasError, setHasError] = useAsyncState(false)
 
-  const toggleShowToast = useCallback(() => setShowToast(false), []);
+  const [primary, setPrimary] = useState('')
+  const [secondary, setSecondary] = useState(secondaryInit)
+  const [selection] = useState<TSelection[]>(selectionInit)
+
+  const handleToast = useCallback(() => setToast(false), []);
+  const handleSelect = useCallback((value) => { setSecondary(value) }, []);
   const handleChange = useCallback(() => modalHandler(!isModalOpen), [isModalOpen, modalHandler]);
 
-  const handleSubmit = () => {
-    primaryAction.actionHandler(input) 
-    setInput('')
-    handleChange()
-    setShowToast(true)
-    setHasError(false)
+  const onSubmit = () => {
+    const isError = form.primary.error
+      ? form.primary.error.onError(primary)
+      : false
+    const data = {
+      url: primary, 
+      id: secondary
+    }
+
+    if(isError) {
+      setError(isError)
+      return
+    }
+
+    form.submit(data)
+      .then(err => {
+        if(err) {
+          setHasError(err)
+          return
+        }
+
+        setPrimary('')
+        handleChange()
+        setToast(true)
+        setError(false)
+        setHasError(false)
+      })
   }
 
-  const checkErrorOnClick = async () => {
-    if(inputAction?.errorHandler) {
-      const error = await setHasError(inputAction.errorHandler(input))
-      if (!error) handleSubmit()
-    }
-    else {
-      handleSubmit()
-    } 
+  const onPrimaryAction = () => {
+    primaryAction.onAction()
+    setToast(true)
   }
 
   const toastMarkup = toast
     ? (<Toast 
-        error={toast.error}
-        content={toast.content} 
-        onDismiss={toggleShowToast} 
-        duration={toast.duration}/>) 
+        error={toastObject.error}
+        content={toastObject.content}
+        duration={toastObject.duration}
+        onDismiss={handleToast} />) 
     : null
 
-  const primaryActionButtonMarkup = (
-    <Button 
-      primary 
-      onClick={()=> {
-        checkErrorOnClick()
-      }}>
-      {primaryAction.actionText}
-    </Button>
-  )
-
-  const modalActions = {}
-
-  if(!inputAction) {
-    modalActions['primaryAction'] = {
-      content: primaryAction.actionText,
-      onAction: handleSubmit,
-      destructive: primaryAction?.destructive,
-    }
-  }
-
-  if(secondaryActions) {
-    modalActions['secondaryActions'] = [
-      ...secondaryActions.map(({
-        actionText,
-        actionHandler,
-        destructive,
-      }) => ({
-          content: actionText,
-          onAction: actionHandler,
-          destructive: destructive
-      }))
-    ]
-  }
-  
   return (
     <>
       <polaris.Modal
         open={isModalOpen}
         onClose={handleChange}
         title={title}
-        {...modalActions}>
+        primaryAction={{
+          ...primaryAction,
+          onAction: form ? onSubmit : onPrimaryAction ,
+          disabled: form && !primary
+        }}
+        secondaryActions={[...secondaryActions]}>
           <polaris.Modal.Section>
             <Stack vertical>
               <Stack.Item>
                 <TextContainer>
-                { typeof content == "string"
-                  ? <p>{content}</p>
-                  : content }
+                  { typeof content == "string"
+                    ? <p>{content}</p>
+                    : content 
+                  }
                 </TextContainer>
               </Stack.Item>
-            { inputAction &&
+            { form &&
               <Stack.Item fill>
-                <TextField
-                  id={inputAction.id}
-                  label={inputAction.label}
-                  value={input}
-                  onChange={(e) => setInput(e)}
-                  autoComplete="off"
-                  autoFocus={true}
-                  type={inputAction.type}
-                  error={hasError}
-                  placeholder={inputAction.placeholder}
-                  connectedRight={primaryActionButtonMarkup}
-                  onFocus={() => {
-                    setHasError(false)
-                  }} />
-
-                  { hasError &&
-                    <div className='mt-4'>
-                      <InlineError message={inputAction.errorMessage} fieldID={inputAction.id} />
-                    </div>
-                  }
+                <Form
+                  select={!!form.secondary.selection}
+                  submit={onSubmit}
+                  primary={{
+                    id: form.primary.id, 
+                    label: form.primary.label,
+                    value: primary,
+                    onChange: (e) => {
+                      setPrimary(e)
+                      setError(false)
+                      setHasError(false)
+                    },
+                    placeholder: form.primary.placeholder,
+                    type: form.primary.type,
+                    errorMessage: form.primary?.error &&
+                      (
+                        hasError
+                        ? "Store hasn't enabled publishing. Please contact the merchant to proceed"
+                        : form.primary.error.content
+                      ),
+                    required: form.primary.required,
+                  }}
+                  secondary={{
+                    id: form.secondary.id, 
+                    label: form.secondary.label,
+                    value: secondary,
+                    onChange: handleSelect,
+                    placeholder: form.secondary.placeholder,
+                    options: selection,
+                  }}
+                  error={error || hasError}
+                  />
               </Stack.Item> 
             }
             </Stack>
           </polaris.Modal.Section>
 
       </polaris.Modal>
-      {showToast && toastMarkup}
+      {toast && toastMarkup}
     </>
   )
-}
+};
 
-export default Modal
+export default Modal;
