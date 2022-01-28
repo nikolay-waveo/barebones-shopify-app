@@ -18,9 +18,9 @@ interface IForm {
     value: string,
     onChange: (e?: any) => void,
     placeholder: string,
-    type: Type,
+    type?: Type,
     errorMessage: string,
-    required: boolean,
+    required?: boolean,
   }
   secondary: {
     id: string,
@@ -28,6 +28,7 @@ interface IForm {
     value: string,
     onChange: (e?: any) => void,
     placeholder: string,
+    type?: Type,
     options?: {
       label: string;
       value: string;
@@ -54,7 +55,7 @@ const Form: FC<IForm> = ({
           onChange={primary.onChange}
           autoComplete="off"
           placeholder={primary.placeholder}
-          type={primary.type}
+          type={primary.type || 'text'}
           error={error}
           requiredIndicator={primary.required}
           />
@@ -78,6 +79,7 @@ const Form: FC<IForm> = ({
               id={secondary.id}
               label={secondary.label}
               value={secondary.value}
+              type={secondary.type || 'text'}
               onChange={secondary.onChange}
               placeholder={secondary.placeholder}
               autoComplete="off"

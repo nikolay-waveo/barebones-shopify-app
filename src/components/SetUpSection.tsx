@@ -1,8 +1,8 @@
 import { FC } from 'react';
 import SetUpInstructions from './SetUpInstructions';
-import img1 from '../assets/Pubsub-asset-1.png'
-import img2 from '../assets/Pubsub-asset-2.png'
-import img3 from '../assets/Pubsub-asset-3.png'
+// import img1 from '../assets/Pubsub-asset-1.png'
+// import img2 from '../assets/Pubsub-asset-2.png'
+// import img3 from '../assets/Pubsub-asset-3.png'
 import PublishingPage from './PublishingPage';
 import SubscribingPage from './SubscribingPage';
 
@@ -36,7 +36,7 @@ const SetUpSection: FC<ISetUpSection> = ({
         [
           {
             img: {
-              src: img1,
+              src: 'https://cdn.shopify.com/s/files/1/0626/5343/2026/files/Pubsub-asset-1.763130c6.png?v=1643337866',
               alt: 'App introduction image',
             },
             title: (
@@ -64,7 +64,7 @@ const SetUpSection: FC<ISetUpSection> = ({
           },
           {
             img: {
-              src: img2,
+              src: 'https://cdn.shopify.com/s/files/1/0626/5343/2026/files/Pubsub-asset-2.79b57dee.png?v=1643337866',
               alt: 'Publishing graphic',
             },
             title: (
@@ -80,7 +80,7 @@ const SetUpSection: FC<ISetUpSection> = ({
           },
           {
             img: {
-              src: img3,
+              src: 'https://cdn.shopify.com/s/files/1/0626/5343/2026/files/Pubsub-asset-3.65ee6a12.png?v=1643337866',
               alt: 'Subscription list graphic',
             },
             title: (

@@ -6,9 +6,9 @@ import {
   PauseMinor,
 } from '@shopify/polaris-icons';
 import { FC, Dispatch, SetStateAction, useState, useEffect } from 'react';
+import FormModal from './Modal';
 import Item from './Item';
 import List from './List';
-import Modal from './Modal';
 import Section from './Section';
 import StorePublishingCard from './StorePublishingCard';
 
@@ -242,71 +242,71 @@ const PublishSection: FC<IPublishSection> = ({
 
       {hasError && <Toast content={errorMessage} error onDismiss={toggleHasError} /> }
 
-      <Modal
-        title="Disconnect All Subscriptions and Disable Publishing"
-        content="All current subscriptions to your store will be disconnected 
-          and publishing will be disabled. Do you wish to continue?" 
-        isModalOpen={showDisconnectAllModal}
-        modalHandler={setShowDisconnectAllModal} 
-        primaryAction={{
-          actionText: "Disconnect All",
-          actionHandler: handleDisconnectAllModal, // handleDisconnectAll
-          destructive: true
-        }}
-        secondaryActions={[
-          {
-            actionText: "Cancel",
-            actionHandler: closeDisconnectAllModal,
-          },
-        ]}
-        toast={{
-          content: "Subscriptions Disconnected"
-        }} />
+        <FormModal
+          title='Disconnect All Subscriptions and Disable Publishing'
+          content='All current subscriptions to your store will be disconnected 
+            and publishing will be disabled. Do you wish to continue?' 
+          isModalOpen={showDisconnectAllModal}
+          modalHandler={setShowDisconnectAllModal} 
+          primaryAction={{
+            content: 'Disconnect All',
+            onAction: handleDisconnectAllModal, // handleDisconnectAll
+            destructive: true
+          }}
+          secondaryActions={[
+            {
+              content: 'Cancel',
+              onAction: closeDisconnectAllModal,
+            },
+          ]}
+          toast={{
+            content: 'Subscriptions Disconnected'
+          }} />
 
-      <Modal
-        title="Deactivate Publishing"
-        content="Deactivating this setting will stop others from finding your 
-          store. Do you wish to continue?" 
-        isModalOpen={showDeactivatePublishModal}
-        modalHandler={setShowDeactivatePublishModal} 
-        primaryAction={{
-          actionText: "Deactivate",
-          actionHandler: handleDeactivatePublishModal, // handleDeactivate
-          destructive: true
-        }}
-        secondaryActions={[
-          {
-            actionText: "Cancel",
-            actionHandler: closeDeactivatePublishModal,
-          },
-        ]}
-        toast={{
-          content: "Publishing Deactivated"
-        }} />
+        <FormModal
+          title='Deactivate Publishing'
+          content='Deactivating this setting will stop others from finding your 
+            store. Do you wish to continue?' 
+          isModalOpen={showDeactivatePublishModal}
+          modalHandler={setShowDeactivatePublishModal} 
+          primaryAction={{
+            content: 'Deactivate',
+            onAction: handleDeactivatePublishModal, // handleDeactivate
+            destructive: true
+          }}
+          secondaryActions={[
+            {
+              content: 'Cancel',
+              onAction: closeDeactivatePublishModal,
+            },
+          ]}
+          toast={{
+            content: 'Publishing Deactivated'
+          }} />
 
-      <Modal
-        title="Get your store link"
-        content={
-          <p>
-            Your store link is <TextStyle variation="code"><span id='copyTarget'>{user}</span></TextStyle>. 
-            Share it with others so that they can find and subscribe to your store.
-          </p>
-        }
-        isModalOpen={showCalloutCardModal}
-        modalHandler={setShowCalloutCardModal} 
-        primaryAction={{
-          actionText: "Copy link",
-          actionHandler: () => onCopyToClipboard('copyTarget'),
-        }}
-        secondaryActions={[
-          {
-            actionText: "Cancel",
-            actionHandler: closeCalloutCardModal,
-          },
-        ]}
-        toast={{
-          content: "Link Copied"
-        }} />
+        <FormModal
+          title='Get your store link'
+          content={
+            <p>
+              Your store link is <TextStyle variation='code'><span id='copyTarget'>{user}</span></TextStyle>. 
+              Share it with others so that they can find and subscribe to your store1121212.
+            </p>
+          }
+          isModalOpen={showCalloutCardModal}
+          modalHandler={setShowCalloutCardModal} 
+          primaryAction={{
+            content: 'Copy link',
+            onAction: () => onCopyToClipboard('copyTarget'),
+          }}
+          secondaryActions={[
+            {
+              content: "Cancel",
+              onAction: closeCalloutCardModal,
+            },
+          ]}
+          toast={{
+            content: "Link Copied"
+          }} />
       
     </Section>
   );
