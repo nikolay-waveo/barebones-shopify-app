@@ -123,7 +123,7 @@ const PublishSection: FC<IPublishSection> = ({
         activated={isActive}
         primary={isActive
           ? {
-              content: "Link",
+              content: "Get link",
               onAction: openCalloutCardModal, 
               primary: true,   
             } 
@@ -145,10 +145,9 @@ const PublishSection: FC<IPublishSection> = ({
             </span></>,
           buttonTitle: "Options",
           content: isPaused
-            ? "Share your store with others, pause publishing or disconnect all stores currently subscribed to you."
-            : "Share your store with others or disable publishing.",
+            ? "Share your publishing link with subscribers and manage subscriptions to your store."
+            : "Share your publishing link with subscribers.",
           sections: [{
-            title: 'Publish options',
             items: listHasItems
               ? [
                   {
@@ -286,15 +285,19 @@ const PublishSection: FC<IPublishSection> = ({
           }} />
 
         <Modal
-          title='Get your store link'
+          title='Get your publishing link'
           content={
-            <p>
-              Your store link is <TextStyle variation='code'><span id='copyTarget'>{user}</span></TextStyle>. 
-              Share it with others so that they can find and subscribe to your store.
-            </p>
+            <>
+              <p>
+                Your publishing link is <TextStyle variation='code'><span id='copyTarget'>{user}</span></TextStyle>.
+              </p>
+              <p>
+                Share this link with others to let them find and send a subscription request to your store.
+              </p>
+            </>
           }
           isModalOpen={showCalloutCardModal}
-          modalHandler={setShowCalloutCardModal} 
+          modalHandler={setShowCalloutCardModal}
           primaryAction={{
             content: 'Copy link',
             onAction: () => onCopyToClipboard('copyTarget'),
