@@ -72,7 +72,7 @@ interface IModal extends IFormModal {
     onAction: () => void,
     destructive?: boolean,
   }[],
-  toast?: {
+  toast: {
     content: string,
     duration?: number,
     error?: boolean,
@@ -112,7 +112,10 @@ const Modal: FC<IModal> = ({
         title={title}
         primaryAction={{
           ...primaryAction,
-          onAction: submit,
+          onAction: () => {
+            submit()
+            setToast(true)
+          },
           disabled: form && disabled
         }}
         secondaryActions={[...secondaryActions]}>

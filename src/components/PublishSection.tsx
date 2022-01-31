@@ -300,7 +300,10 @@ const PublishSection: FC<IPublishSection> = ({
           modalHandler={setShowCalloutCardModal}
           primaryAction={{
             content: 'Copy link',
-            onAction: () => onCopyToClipboard('copyTarget'),
+            onAction: () => {
+              onCopyToClipboard('copyTarget')
+              closeCalloutCardModal()
+            },
           }}
           secondaryActions={[
             {
