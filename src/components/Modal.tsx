@@ -36,7 +36,7 @@ interface IFormModal {
         content: string | TErrorMessage,
         pattern: RegExp,
       },
-      trim?: TTrimPatterns,
+      trim?: boolean | TTrimPatterns,
     },
     secondary: {
       id: string,

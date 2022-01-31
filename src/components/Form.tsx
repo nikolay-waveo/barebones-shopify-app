@@ -39,7 +39,7 @@ interface IForm {
       content: string | TErrorMessage,
       pattern: RegExp,
     }
-    trim?: TTrimPatterns,
+    trim?: boolean | TTrimPatterns,
   }
   secondary: {
     id: string,
@@ -101,10 +101,16 @@ const Form: FC<IForm> = ({
     return false
   }
 
-  const onTrim = (input: string, trim?: TTrimPatterns): string => {
+  const onTrim = (input: string, trim?: boolean | TTrimPatterns): string => {
     let output = input.trim()
-    if(trim?.start) output = output.replace(trim.start, '')
-    if(trim?.end) output = output.replace(trim.end, '')
+    
+    if(typeof trim == 'boolean') {
+      output = output.replace(/^(https?:|)\/\//,'').replace(/\/$/,'')
+    }
+    else {
+      if(trim?.start) output = output.replace(trim.start, '')
+      if(trim?.end) output = output.replace(trim.end, '')
+    }
     return output
   }
 
