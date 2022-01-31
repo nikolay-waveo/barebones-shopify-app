@@ -1,4 +1,4 @@
-import { ResourceItem, TextStyle, Toast } from '@shopify/polaris';
+import { Card, ResourceItem, TextStyle, Toast } from '@shopify/polaris';
 import {
   CancelSmallMinor,
   TickMinor,
@@ -119,72 +119,71 @@ const PublishSection: FC<IPublishSection> = ({
       sectionTitle="Publish"
       sectionDescription="See which stores are subscribed to you." >
 
-      <StorePublishingCard
-        activated={isActive}
-        primary={isActive
-          ? {
-              content: "Get link",
-              onAction: openCalloutCardModal, 
-              primary: true,   
-            } 
-          : null
-        }
-        onDeactivated={{
-          title: <>Publish your products <span className="text-red-600 capitalize">({publishState})</span></>,
-          buttonTitle: "Activate",
-          content: "Allow others to find and subscribe to the products of your store.",
-          defaultButton: {
-            content: 'Activate', 
-            icon: TickMinor,
-            onAction: handlePublish //handleActivate
+      <Card>
+        <StorePublishingCard
+          activated={isActive}
+          primary={isActive
+            ? {
+                content: "Get link",
+                onAction: openCalloutCardModal, 
+                primary: true,   
+              } 
+            : null
           }
-        }}
-        onActivated={{
-          title: <>Publish your products <span className={(isPaused ? 'text-cyan-600': 'text-green-600') + ' capitalize'}>
-            ({publishState})
-            </span></>,
-          buttonTitle: "Options",
-          content: isPaused
-            ? "Share your publishing link with subscribers and manage subscriptions to your store."
-            : "Share your publishing link with subscribers.",
-          sections: [{
-            items: listHasItems
-              ? [
-                  {
-                    content: isPaused
-                      ? 'Resume' 
-                      : 'Pause',
-                    active: isPaused,
-                    icon: isPaused
-                      ? PlayMinor
-                      : PauseMinor,
-                    onAction: handlePause // handlePause
-                  },
-                  {
-                    destructive: true,
-                    content: 'Disconnect All',
-                    icon: CancelSmallMinor,
-                    onAction: openDisconnectAllModal
-                  },
-                ]
-              : [
-                  {
-                    destructive: true,
-                    content: 'Deactivate',
-                    icon: CancelSmallMinor,
-                    onAction: openDeactivatePublishModal
-                  },
-                ]
-          }],
-        }} />
+          onDeactivated={{
+            title: <>Publish your products <span className="text-red-600 capitalize">({publishState})</span></>,
+            buttonTitle: "Activate",
+            content: "Allow others to find and subscribe to the products of your store.",
+            defaultButton: {
+              content: 'Activate', 
+              icon: TickMinor,
+              onAction: handlePublish //handleActivate
+            }
+          }}
+          onActivated={{
+            title: <>Publish your products <span className={(isPaused ? 'text-cyan-600': 'text-green-600') + ' capitalize'}>
+              ({publishState})
+              </span></>,
+            buttonTitle: "Options",
+            content: isPaused
+              ? "Share your publishing link with subscribers and manage subscriptions to your store."
+              : "Share your publishing link with subscribers.",
+            sections: [{
+              items: listHasItems
+                ? [
+                    {
+                      content: isPaused
+                        ? 'Resume' 
+                        : 'Pause',
+                      active: isPaused,
+                      icon: isPaused
+                        ? PlayMinor
+                        : PauseMinor,
+                      onAction: handlePause // handlePause
+                    },
+                    {
+                      destructive: true,
+                      content: 'Disconnect All',
+                      icon: CancelSmallMinor,
+                      onAction: openDisconnectAllModal
+                    },
+                  ]
+                : [
+                    {
+                      destructive: true,
+                      content: 'Deactivate',
+                      icon: CancelSmallMinor,
+                      onAction: openDeactivatePublishModal
+                    },
+                  ]
+            }],
+          }} />
 
       { isActive && 
         <List
           list={publishedTo}
           listText={{
-            title: isPaused 
-              ? <>Subscribers <span className="text-cyan-600">(Paused)</span></>
-              : "Subscribers",
+            title: "Subscribers",
             description: "You can connect, disconnect and track subscriptions to your store.",
           }}
           emptyListText={{
@@ -239,6 +238,7 @@ const PublishSection: FC<IPublishSection> = ({
                 </ResourceItem> 
               )
           }}/> }
+      </Card>
 
       {hasError && <Toast content={errorMessage} error onDismiss={toggleHasError} /> }
 

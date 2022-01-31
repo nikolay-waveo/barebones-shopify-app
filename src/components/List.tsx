@@ -58,7 +58,7 @@ const List: React.FC<IList> = ({
   );
 
   return (
-    <Card>
+    <>
       <Card.Section>
         <div className='grid sm:grid-flow-col auto-cols-auto gap-8'>
           <div className='row-start-3 sm:col-start-2 sm:row-span-2 sm:self-center sm:justify-self-end'>
@@ -81,7 +81,7 @@ const List: React.FC<IList> = ({
           emptyState={emptyStateMarkup}
           renderItem={renderItem} />
       </Card.Section>
-    </Card>
+    </>
   )
 }
 

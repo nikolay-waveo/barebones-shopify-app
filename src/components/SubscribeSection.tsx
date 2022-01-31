@@ -1,4 +1,4 @@
-import { ResourceItem } from '@shopify/polaris';
+import { Card, ResourceItem } from '@shopify/polaris';
 import { CancelSmallMinor } from '@shopify/polaris-icons';
 import { FC, Dispatch, SetStateAction } from 'react';
 import Modal from './Modal';
@@ -67,73 +67,75 @@ const SubscribeSection: FC<ISubscribeSection> = ({
     <Section
       sectionTitle="Subscribe"
       sectionDescription="Subscribe to a published store and check on pending subscriptions." >
-
-      <List
-        list={subscribedTo}
-        listText={{
-          title: "Your subscriptions",
-          description: "A list of all of your product subscriptions to other stores.",
-        }}
-        emptyListText={{
-          title: "No subscriptions yet",
-          description: "Track your subscriptions from stores."
-        }}
-        primaryAction={{
-          content: "New Subscription",
-          onAction: openAddToListModal,
-        }}
-        renderItem={(item) => { 
-          return (
-            <ResourceItem
-              id={item.id}
-              onClick={() => {}}>
-                <Item
-                  item={item} 
-                  loading={{
-                    accessibilityLabel: "Sending request",
-                  }}
-                  badges={[
-                    {
-                      status: "pending",
-                      tooltip: "Pending publisher approval",
-                      statusStyle: "new",
-                      dateTooltip: 'Pending approval',
-                      progress: 'incomplete',
-                    },
-                    {
-                      status: "active",
-                      tooltip: "Your subscription is active",
-                      statusStyle: "success",
-                      dateTooltip: 'Active subscription',
-                      progress: 'complete',
-                    },
-                    {
-                      status: "stopped",
-                      tooltip: "Subscription canceled by publisher",
-                      statusStyle: "critical",
-                      dateTooltip: 'Subscription stopped',
-                      progress: 'partiallyComplete',
-                    },
-                    {
-                      status: "declined",
-                      tooltip: "Subscription declined by publisher",
-                      statusStyle: "warning",
-                      dateTooltip: 'Subscription declined',
-                      progress: 'partiallyComplete',
-                    },
-                  ]}
-                  options={[
-                    {
-                      content: 'Disconnect',
-                      helpText: "Disconnect from a store",
-                      icon: CancelSmallMinor,
-                      onAction: () => onSubscribeDisconnect(item),
-                      destructive: true,
-                    },
-                  ]} />
-              </ResourceItem>
-            )
-        }} />
+      
+      <Card>
+        <List
+          list={subscribedTo}
+          listText={{
+            title: "Your subscriptions",
+            description: "A list of all of your product subscriptions to other stores.",
+          }}
+          emptyListText={{
+            title: "No subscriptions yet",
+            description: "Track your subscriptions from stores."
+          }}
+          primaryAction={{
+            content: "New Subscription",
+            onAction: openAddToListModal,
+          }}
+          renderItem={(item) => { 
+            return (
+              <ResourceItem
+                id={item.id}
+                onClick={() => {}}>
+                  <Item
+                    item={item} 
+                    loading={{
+                      accessibilityLabel: "Sending request",
+                    }}
+                    badges={[
+                      {
+                        status: "pending",
+                        tooltip: "Pending publisher approval",
+                        statusStyle: "new",
+                        dateTooltip: 'Pending approval',
+                        progress: 'incomplete',
+                      },
+                      {
+                        status: "active",
+                        tooltip: "Your subscription is active",
+                        statusStyle: "success",
+                        dateTooltip: 'Active subscription',
+                        progress: 'complete',
+                      },
+                      {
+                        status: "stopped",
+                        tooltip: "Subscription canceled by publisher",
+                        statusStyle: "critical",
+                        dateTooltip: 'Subscription stopped',
+                        progress: 'partiallyComplete',
+                      },
+                      {
+                        status: "declined",
+                        tooltip: "Subscription declined by publisher",
+                        statusStyle: "warning",
+                        dateTooltip: 'Subscription declined',
+                        progress: 'partiallyComplete',
+                      },
+                    ]}
+                    options={[
+                      {
+                        content: 'Disconnect',
+                        helpText: "Disconnect from a store",
+                        icon: CancelSmallMinor,
+                        onAction: () => onSubscribeDisconnect(item),
+                        destructive: true,
+                      },
+                    ]} />
+                </ResourceItem>
+              )
+          }} />
+        </Card>
 
         <Modal
           title='Subscribe to a new store'
@@ -144,7 +146,7 @@ const SubscribeSection: FC<ISubscribeSection> = ({
           form={{
             primary: {
               id: 'storeLink',
-              label: 'Store publishing link',
+              label: 'Store subscription link',
               placeholder: 'Example: store.myshopify.com',
               error: {
                 content: {

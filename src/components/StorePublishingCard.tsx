@@ -63,7 +63,7 @@ const StorePublishingCard: FC<IStorePublishingCard> = ({
   const style = contentStyle as Variation
 
   return (
-    <Card sectioned >
+    <Card.Section>
       <div className="flex flex-col sm:flex-row justify-between item-start sm:items-center gap-5">
         <div className="flex flex-col">
           <Heading>{title}</Heading>
@@ -105,7 +105,7 @@ const StorePublishingCard: FC<IStorePublishingCard> = ({
              }
         </div>
       </div>
-    </Card>
+    </Card.Section>
   )
 }
 
