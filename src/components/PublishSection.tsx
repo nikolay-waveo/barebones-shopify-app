@@ -6,11 +6,12 @@ import {
   PauseMinor,
 } from '@shopify/polaris-icons';
 import { FC, Dispatch, SetStateAction, useState, useEffect } from 'react';
-import FormModal from './Modal';
+import Modal from './Modal';
 import Item from './Item';
 import List from './List';
 import Section from './Section';
 import StorePublishingCard from './StorePublishingCard';
+
 
 type TPublishState = 'active' | 'disabled' | 'paused'
 
@@ -242,7 +243,7 @@ const PublishSection: FC<IPublishSection> = ({
 
       {hasError && <Toast content={errorMessage} error onDismiss={toggleHasError} /> }
 
-        <FormModal
+        <Modal
           title='Disconnect All Subscriptions and Disable Publishing'
           content='All current subscriptions to your store will be disconnected 
             and publishing will be disabled. Do you wish to continue?' 
@@ -263,7 +264,7 @@ const PublishSection: FC<IPublishSection> = ({
             content: 'Subscriptions Disconnected'
           }} />
 
-        <FormModal
+        <Modal
           title='Deactivate Publishing'
           content='Deactivating this setting will stop others from finding your 
             store. Do you wish to continue?' 
@@ -284,12 +285,12 @@ const PublishSection: FC<IPublishSection> = ({
             content: 'Publishing Deactivated'
           }} />
 
-        <FormModal
+        <Modal
           title='Get your store link'
           content={
             <p>
               Your store link is <TextStyle variation='code'><span id='copyTarget'>{user}</span></TextStyle>. 
-              Share it with others so that they can find and subscribe to your store1121212.
+              Share it with others so that they can find and subscribe to your store.
             </p>
           }
           isModalOpen={showCalloutCardModal}
