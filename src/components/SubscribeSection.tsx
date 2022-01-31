@@ -153,10 +153,7 @@ const SubscribeSection: FC<ISubscribeSection> = ({
                 },
                 pattern: /^((https?:|)\/\/)*(\w+-)*\w+(.myshopify.com)\/*$/,
               },
-              trim: {
-                start: /^(https?:|)\/\//,
-                end: /\/$/,
-              }
+              trim: true
             },
             secondary: {
               id: 'location',
