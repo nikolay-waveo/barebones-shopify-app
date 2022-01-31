@@ -49,7 +49,7 @@ const SubscribingPage: FC<ISubscribingPage> = ({
           }} 
           primary={{
             id: 'primary',
-            label: 'Link',
+            label: 'Store subscription link',
             placeholder: 'Example: store.myshopify.com',
             type: 'text',
             error: {
@@ -62,7 +62,7 @@ const SubscribingPage: FC<ISubscribingPage> = ({
           }}
           secondary={{
             id: 'secondary',
-            label: 'Location',
+            label: 'Your store location',
             placeholder: 'Example: 12345678900',
             options: options
           }} />

@@ -1,8 +1,5 @@
 import { FC } from 'react';
 import SetUpInstructions from './SetUpInstructions';
-// import img1 from '../assets/Pubsub-asset-1.png'
-// import img2 from '../assets/Pubsub-asset-2.png'
-// import img3 from '../assets/Pubsub-asset-3.png'
 import PublishingPage from './PublishingPage';
 import SubscribingPage from './SubscribingPage';
 
@@ -76,7 +73,7 @@ const SetUpSection: FC<ISetUpSection> = ({
             ),
             content: <PublishingPage action={actionFromName('publishing')}/>,
             prevLabel: 'Back',
-            nextLabel: 'Continue without enabling',
+            nextLabel: 'Continue',
           },
           {
             img: {
@@ -92,7 +89,7 @@ const SetUpSection: FC<ISetUpSection> = ({
             ),
             content: <SubscribingPage action={actionFromName('subscribing')} locations={actionFromName('subscribing').assets}/>,
             prevLabel: 'Back',
-            nextLabel: 'Continue without subscribing',
+            nextLabel: 'Continue',
           },
           {
             title: (
