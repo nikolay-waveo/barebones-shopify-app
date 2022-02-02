@@ -13,7 +13,7 @@ import Section from './Section';
 import StorePublishingCard from './StorePublishingCard';
 
 
-type TPublishState = 'active' | 'disabled' | 'paused'
+type TPublishState = 'active' | 'deactivated' | 'paused'
 
 type TSubscription = {
   subscription: {
@@ -35,7 +35,7 @@ interface IPublishSection {
   handlePause: () => void,
   // handleActivate: () => void,
   // handleDeactivate: () => void,
-  // handleDisconnectAll: () => void,
+  // handleStopAll: () => void,
   handlePublish: () => void, //!
   toggleHasError: () => void,
   onCopyToClipboard: (id: string) => void,
@@ -47,17 +47,17 @@ interface IPublishSection {
   closeCalloutCardModal: () => void,
   setShowCalloutCardModal: Dispatch<SetStateAction<boolean>>,
   
-  showDisconnectAllModal: boolean,
-  openDisconnectAllModal: () => void,
-  closeDisconnectAllModal: () => void,
-  handleDisconnectAllModal: () => void, //!
-  setShowDisconnectAllModal: Dispatch<SetStateAction<boolean>>,
+  showStopAllModal: boolean,
+  openStopAllModal: () => void,
+  closeStopAllModal: () => void,
+  handleStopAllModal: () => void, //!
+  setShowStopAllModal: Dispatch<SetStateAction<boolean>>,
 
-  showDeactivatePublishModal: boolean,
-  openDeactivatePublishModal: () => void,
-  closeDeactivatePublishModal: () => void,
-  handleDeactivatePublishModal: () => void, //!
-  setShowDeactivatePublishModal: Dispatch<SetStateAction<boolean>>,
+  showStopModal: boolean,
+  openStopModal: () => void,
+  closeStopModal: () => void,
+  handleStopModal: () => void, //!
+  setShowStopModal: Dispatch<SetStateAction<boolean>>,
 }
 
 const PublishSection: FC<IPublishSection> = ({
@@ -71,7 +71,7 @@ const PublishSection: FC<IPublishSection> = ({
   handlePause,
   // handleActivate,
   // handleDeactivate,
-  // handleDisconnectAll,
+  // handleStopAll,
   handlePublish, //!
   toggleHasError,
   onCopyToClipboard,
@@ -83,17 +83,17 @@ const PublishSection: FC<IPublishSection> = ({
   closeCalloutCardModal,
   setShowCalloutCardModal,
 
-  showDisconnectAllModal,
-  openDisconnectAllModal,
-  closeDisconnectAllModal,
-  handleDisconnectAllModal, //!
-  setShowDisconnectAllModal,
+  showStopAllModal,
+  openStopAllModal,
+  closeStopAllModal,
+  handleStopAllModal, //!
+  setShowStopAllModal,
 
-  showDeactivatePublishModal,
-  openDeactivatePublishModal,
-  closeDeactivatePublishModal,
-  handleDeactivatePublishModal, //!
-  setShowDeactivatePublishModal,
+  showStopModal,
+  openStopModal,
+  closeStopModal,
+  handleStopModal, //!
+  setShowStopModal,
 }) => {
 
   const [listHasItems, setListHasItems] = useState(publishedTo.length > 0)
@@ -108,7 +108,7 @@ const PublishSection: FC<IPublishSection> = ({
     listHasItems: boolean,
   ): TPublishState => {
     if (publish && pause && listHasItems) return 'paused'
-    if (!publish) return 'disabled'
+    if (!publish) return 'deactivated'
     return 'active'
   }
 
@@ -116,8 +116,8 @@ const PublishSection: FC<IPublishSection> = ({
 
   return (
     <Section
-      sectionTitle="Publish"
-      sectionDescription="See which stores are subscribed to you." >
+      sectionTitle="Publishing"
+      sectionDescription="Publish, pause and manage subscriptions to your store." >
 
       <Card>
         <StorePublishingCard
@@ -126,12 +126,12 @@ const PublishSection: FC<IPublishSection> = ({
             ? {
                 content: "Get link",
                 onAction: openCalloutCardModal, 
-                primary: true,   
+                primary: true,
               } 
             : null
           }
           onDeactivated={{
-            title: <>Publish your products <span className="text-red-600 capitalize">({publishState})</span></>,
+            title: "Publish your products",
             buttonTitle: "Activate",
             content: "Allow others to find and subscribe to the products of your store.",
             defaultButton: {
@@ -141,15 +141,15 @@ const PublishSection: FC<IPublishSection> = ({
             }
           }}
           onActivated={{
-            title: <>Publish your products <span className={(isPaused ? 'text-cyan-600': 'text-green-600') + ' capitalize'}>
-              ({publishState})
-              </span></>,
-            buttonTitle: "Options",
+            title: <>Publish your products {isPaused && 
+                <span className={'text-cyan-600 capitalize'}>(paused)</span>}
+              </>,
+            buttonTitle: "Options...",
             content: isPaused
-              ? "Share your publishing link with subscribers and manage subscriptions to your store."
+              ? "Manage subscriptions to your store."
               : "Share your publishing link with subscribers.",
             sections: [{
-              items: listHasItems
+              items: !listHasItems
                 ? [
                     {
                       content: isPaused
@@ -163,17 +163,17 @@ const PublishSection: FC<IPublishSection> = ({
                     },
                     {
                       destructive: true,
-                      content: 'Disconnect All',
+                      content: 'Remove All...',
                       icon: CancelSmallMinor,
-                      onAction: openDisconnectAllModal
+                      onAction: openStopAllModal
                     },
                   ]
                 : [
                     {
                       destructive: true,
-                      content: 'Deactivate',
+                      content: 'Stop publishing...',
                       icon: CancelSmallMinor,
-                      onAction: openDeactivatePublishModal
+                      onAction: openStopModal
                     },
                   ]
             }],
@@ -184,11 +184,11 @@ const PublishSection: FC<IPublishSection> = ({
           list={publishedTo}
           listText={{
             title: "Subscribers",
-            description: "You can connect, disconnect and track subscriptions to your store.",
+            description: "View and manage your subscribers.",
           }}
           emptyListText={{
-            title: "No subscribers yet",
-            description: "Track user subscriptions to your store."
+            title: "You don't have any subscribers",
+            description: "Share your store link and gain subscribers."
           }} 
           renderItem={(item) => { 
             return (
@@ -243,20 +243,22 @@ const PublishSection: FC<IPublishSection> = ({
       {hasError && <Toast content={errorMessage} error onDismiss={toggleHasError} /> }
 
         <Modal
-          title='Disconnect All Subscriptions and Disable Publishing'
-          content='All current subscriptions to your store will be disconnected 
-            and publishing will be disabled. Do you wish to continue?' 
-          isModalOpen={showDisconnectAllModal}
-          modalHandler={setShowDisconnectAllModal} 
+          title='Remove All Subscriptions'
+          content={<>
+              <p>All current subscriptions to your store will be removed and publishing will be stopped.</p>
+              <p>Do you wish to continue?</p>
+            </>}
+          isModalOpen={showStopAllModal}
+          modalHandler={setShowStopAllModal} 
           primaryAction={{
-            content: 'Disconnect All',
-            onAction: handleDisconnectAllModal, // handleDisconnectAll
+            content: 'Remove All',
+            onAction: handleStopAllModal, // handleStopAll
             destructive: true
           }}
           secondaryActions={[
             {
               content: 'Cancel',
-              onAction: closeDisconnectAllModal,
+              onAction: closeStopAllModal,
             },
           ]}
           toast={{
@@ -264,24 +266,26 @@ const PublishSection: FC<IPublishSection> = ({
           }} />
 
         <Modal
-          title='Deactivate Publishing'
-          content='Deactivating this setting will stop others from finding your 
-            store. Do you wish to continue?' 
-          isModalOpen={showDeactivatePublishModal}
-          modalHandler={setShowDeactivatePublishModal} 
+          title='Stop Publishing'
+          content={<>
+              <p>Others will no longer be able to subscribe to your store.</p>
+              <p>Do you wish to continue?</p>
+            </>}
+          isModalOpen={showStopModal}
+          modalHandler={setShowStopModal}
           primaryAction={{
-            content: 'Deactivate',
-            onAction: handleDeactivatePublishModal, // handleDeactivate
+            content: 'Stop',
+            onAction: handleStopModal, // handleDeactivate
             destructive: true
           }}
           secondaryActions={[
             {
               content: 'Cancel',
-              onAction: closeDeactivatePublishModal,
+              onAction: closeStopModal,
             },
           ]}
           toast={{
-            content: 'Publishing Deactivated'
+            content: 'Publishing Stopped'
           }} />
 
         <Modal

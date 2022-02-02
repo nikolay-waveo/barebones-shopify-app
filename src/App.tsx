@@ -39,8 +39,8 @@ const App: FC<IAppProps> = ({
   const [publishMode, setPublishMode] = useState(false)
   const [isPublishActive, setIsPublishActive] = useState(publishMode)
   const [isPublishPaused, setIsPublishPaused] = useState(publishMode)
-  const [showDeactivatePublishModal, setShowDeactivatePublishModal] = useState(false)
-  const [showDisconnectAllModal, setShowDisconnectAllModal] = useState(false)
+  const [showStopModal, setShowStopModal] = useState(false)
+  const [showStopAllModal, setShowStopAllModal] = useState(false)
   const [showCalloutCardModal, setShowCalloutCardModal] = useState(false)
   const [showAddToListModal, setShowAddToListModal] = useState(false)
   const [itemIsLoading, setItemIsLoading] = useState(false)
@@ -266,11 +266,11 @@ const App: FC<IAppProps> = ({
   //* ---------------------------------------------------------------------------------------------------------------
   // Toggle
 
-  const openDeactivatePublishModal = (): void => setShowDeactivatePublishModal(true)
-  const closeDeactivatePublishModal = (): void => setShowDeactivatePublishModal(false)
+  const openStopModal = (): void => setShowStopModal(true)
+  const closeStopModal = (): void => setShowStopModal(false)
 
-  const openDisconnectAllModal = (): void => setShowDisconnectAllModal(true)
-  const closeDisconnectAllModal = (): void => setShowDisconnectAllModal(false)
+  const openStopAllModal = (): void => setShowStopAllModal(true)
+  const closeStopAllModal = (): void => setShowStopAllModal(false)
 
   const openCalloutCardModal = (): void => setShowCalloutCardModal(true)
   const closeCalloutCardModal = (): void => setShowCalloutCardModal(false)    
@@ -284,7 +284,7 @@ const App: FC<IAppProps> = ({
 
   const handlePublish = useCallback(() => {
     if (isPublishActive) {
-      openDeactivatePublishModal()
+      openStopModal()
     } else {
       useUpdatePublishStatus({
         origin: user,
@@ -299,7 +299,7 @@ const App: FC<IAppProps> = ({
     }
   }, [isPublishActive, user, publishMode])
 
-  const handleDeactivatePublishModal = useCallback(() => {
+  const handleStopModal = useCallback(() => {
     useUpdatePublishStatus({
       origin: user,
       publish: false
@@ -307,12 +307,12 @@ const App: FC<IAppProps> = ({
     .then((): void => {
       setPublishMode(false)
       setIsPublishActive(false)
-      closeDeactivatePublishModal()
+      closeStopModal()
     })
   }, [])
 
-  const handleDisconnectAllModal = useCallback(() => {
-    handleDisconnectAll()
+  const handleStopAllModal = useCallback(() => {
+    handleStopAll()
     useUpdatePublishStatus({
       origin: user,
       publish: false
@@ -320,7 +320,7 @@ const App: FC<IAppProps> = ({
     .then((): void => {
       setPublishMode(false)
       setIsPublishActive(false)
-      closeDisconnectAllModal()
+      closeStopAllModal()
     })
   }, [])
   
@@ -334,7 +334,7 @@ const App: FC<IAppProps> = ({
     }): void => setIsPublishPaused(!publish))
   }, [user, isPublishPaused])
 
-  const handleDisconnectAll = useCallback(() => {
+  const handleStopAll = useCallback(() => {
     publishedTo.forEach(store => onPublishDisconnect(store))
   }, [])
 
@@ -365,7 +365,7 @@ const App: FC<IAppProps> = ({
       setIsPublishPaused(pause)
     })
     .then(() => {
-      closeDeactivatePublishModal()
+      closeStopModal()
     })
   }, [])
 
@@ -374,7 +374,7 @@ const App: FC<IAppProps> = ({
     else __handleDeactivate()
   }, [])
 
-  const __handleDisconnectAll = useCallback(() => {
+  const __handleStopAll = useCallback(() => {
     publishedTo.forEach(store => onPublishDisconnect(store))
     useUpdatePublishStatus({
       origin: user,
@@ -386,7 +386,7 @@ const App: FC<IAppProps> = ({
       setIsPublishPaused(pause)
     })
     .then(() => {
-      closeDisconnectAllModal()
+      closeStopAllModal()
     })
   }, [])
 
@@ -446,17 +446,17 @@ const App: FC<IAppProps> = ({
                 closeCalloutCardModal={closeCalloutCardModal}
                 setShowCalloutCardModal={setShowCalloutCardModal}
 
-                showDisconnectAllModal={showDisconnectAllModal}
-                openDisconnectAllModal={openDisconnectAllModal}
-                closeDisconnectAllModal={closeDisconnectAllModal}
-                handleDisconnectAllModal={handleDisconnectAllModal}
-                setShowDisconnectAllModal={setShowDisconnectAllModal}
+                showStopAllModal={showStopAllModal}
+                openStopAllModal={openStopAllModal}
+                closeStopAllModal={closeStopAllModal}
+                handleStopAllModal={handleStopAllModal}
+                setShowStopAllModal={setShowStopAllModal}
 
-                showDeactivatePublishModal={showDeactivatePublishModal}
-                openDeactivatePublishModal={openDeactivatePublishModal}
-                closeDeactivatePublishModal={closeDeactivatePublishModal}
-                handleDeactivatePublishModal={handleDeactivatePublishModal}
-                setShowDeactivatePublishModal={setShowDeactivatePublishModal}
+                showStopModal={showStopModal}
+                openStopModal={openStopModal}
+                closeStopModal={closeStopModal}
+                handleStopModal={handleStopModal}
+                setShowStopModal={setShowStopModal}
                 />
 
               <SubscribeSection

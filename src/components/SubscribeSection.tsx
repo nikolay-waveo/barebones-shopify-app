@@ -65,19 +65,19 @@ const SubscribeSection: FC<ISubscribeSection> = ({
 
   return (
     <Section
-      sectionTitle="Subscribe"
-      sectionDescription="Subscribe to a published store and check on pending subscriptions." >
+      sectionTitle="Subscribing"
+      sectionDescription="Subscribe and manage your subscriptions to different stores." >
       
       <Card>
         <List
           list={subscribedTo}
           listText={{
             title: "Your subscriptions",
-            description: "A list of all of your product subscriptions to other stores.",
+            description: "View and manage your subscriptions.",
           }}
           emptyListText={{
-            title: "No subscriptions yet",
-            description: "Track your subscriptions from stores."
+            title: "You don't have any subscriptions",
+            description: "Subscribe to stores to track them here."
           }}
           primaryAction={{
             content: "New Subscription",
