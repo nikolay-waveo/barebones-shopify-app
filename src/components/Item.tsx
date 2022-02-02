@@ -57,11 +57,14 @@ const Item: React.FC<IItem> = ({
   const badge = badges.find(badge => status === badge.status)
 
   const daysAsString = (): string => {
+    if(!updatedAt) return '-1 DAYS'
+
     const MS_PER_DAY = 1000 * 60 * 60 * 24
     const daysInMS = new Date().getTime() - Date.parse(updatedAt)
     const days = Math.floor(daysInMS / MS_PER_DAY)
     const dayString = `${days.toString()} DAY`
-    if (days > 1) return dayString + 'S'
+
+    if (days > 1 || days < 1) return dayString + 'S'
     return dayString
   }
 
