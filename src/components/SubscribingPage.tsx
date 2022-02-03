@@ -34,7 +34,7 @@ const SubscribingPage: FC<ISubscribingPage> = ({
   return (
     <div className='flex flex-col space-y-10 text-emerald-800'>
       <p className='font-medium text-center'>
-        Use a publishers link to subscribe to their store and start syncing with their products.
+        Use a publishers store link to subscribe to their store and start syncing your store with their products.
       </p>
       <div>
         <Form
@@ -48,7 +48,7 @@ const SubscribingPage: FC<ISubscribingPage> = ({
           }} 
           primary={{
             id: 'primary',
-            label: 'Store subscription link',
+            label: 'Publisher store link',
             placeholder: 'Example: store.myshopify.com',
             type: 'text',
             error: {
@@ -61,7 +61,7 @@ const SubscribingPage: FC<ISubscribingPage> = ({
           }}
           secondary={{
             id: 'secondary',
-            label: 'Your store location',
+            label: `Your store location${options.length > 0 ? '' : ' ID'}`,
             placeholder: 'Example: 12345678900',
             options: options
           }} />

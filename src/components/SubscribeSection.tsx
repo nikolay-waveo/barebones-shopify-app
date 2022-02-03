@@ -139,14 +139,13 @@ const SubscribeSection: FC<ISubscribeSection> = ({
 
         <Modal
           title='Subscribe to a new store'
-          content='You can add the store subscription link here to subscribe to that
-            store and recieve product updates from them.'
+          content='Use a publishers store link to subscribe to their store and start syncing your store with their products.'
           isModalOpen={showAddToListModal}
           modalHandler={setShowAddToListModal}
           form={{
             primary: {
               id: 'storeLink',
-              label: 'Store subscription link',
+              label: 'Publisher store link',
               placeholder: 'Example: store.myshopify.com',
               error: {
                 content: {
@@ -159,7 +158,7 @@ const SubscribeSection: FC<ISubscribeSection> = ({
             },
             secondary: {
               id: 'location',
-              label: 'Your store location',
+              label: `Your store location${selections ? '' : ' ID'}`,
               placeholder: 'Example: 1234567900',
               options: selections
             },
