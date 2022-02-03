@@ -1,5 +1,4 @@
-import { Toast } from '@shopify/polaris';
-import { FC, useCallback, useState } from 'react';
+import { FC } from 'react';
 import Form from './Form';
 
 type TSubAction = {
@@ -67,7 +66,7 @@ const SubscribingPage: FC<ISubscribingPage> = ({
             options: options
           }} />
           <p className='text-center mt-4'>
-            You can always manage this later.
+            You can always change this later.
           </p>
         </div>
     </div>

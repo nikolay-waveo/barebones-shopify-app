@@ -38,7 +38,7 @@ const PublishingPage: FC<IPublishingPage> = ({
             } 
         </Button>
         <p className='text-center mt-4'>
-          You can always disable this later.
+          You can always change this later.
         </p>
       </div>
     </div>
