@@ -50,7 +50,8 @@ interface IForm {
   }
   inModal?: {
     onDisabled: Dispatch<SetStateAction<boolean>>,
-    onSubmit: Dispatch<SetStateAction<() => void>>
+    onSubmit: Dispatch<SetStateAction<() => void>>,
+    onToast?: Dispatch<SetStateAction<boolean>>,
   }
 }
 
@@ -140,13 +141,13 @@ const Form: FC<IForm> = ({
 
     submit.onAction(formData)
       .then(err => {
-
         if(err) {
           setSubmitError(err)
           return
         }
         onResetFields()
         onResetErrors()
+        inModal?.onToast(true)
       })
   }, [primaryField, secondaryField])
 
@@ -158,6 +159,7 @@ const Form: FC<IForm> = ({
           label={primary.label}
           value={primaryField}
           onChange={handlePrimaryField}
+          onFocus={() => setDisabled(false)}
           autoComplete="off"
           placeholder={primary.placeholder}
           type={primary.type || 'text'}

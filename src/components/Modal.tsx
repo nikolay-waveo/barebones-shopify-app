@@ -112,10 +112,7 @@ const Modal: FC<IModal> = ({
         title={title}
         primaryAction={{
           ...primaryAction,
-          onAction: () => {
-            submit()
-            setToast(true)
-          },
+          onAction: submit,
           disabled: form && disabled
         }}
         secondaryActions={[...secondaryActions]}>
@@ -149,6 +146,7 @@ const Modal: FC<IModal> = ({
                   inModal={{
                     onDisabled: setDisabled,
                     onSubmit: setSubmit,
+                    onToast: setToast,
                   }}
                   />
               </Stack.Item> 
