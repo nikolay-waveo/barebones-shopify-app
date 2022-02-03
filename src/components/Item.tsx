@@ -51,7 +51,7 @@ const Item: React.FC<IItem> = ({
   } = loading
 
   const hasContent = (): boolean => {
-    return !!(item.status && item.id && item.storeURL)
+    return !!(item.status && item.id && item.storeURL && item.updatedAt)
   }
 
   const badge = badges.find(badge => status === badge.status)
@@ -85,16 +85,17 @@ const Item: React.FC<IItem> = ({
           : <SkeletonDisplayText size="small" /> }
       </h3>
       <div className='col-span-2 justify-self-center'>
-        <Tooltip
-          content={badge.dateTooltip}
-          preferredPosition='above'>
-          <Badge
-            size="small"
-            progress={badge.progress}
-            status={progressToStyle(badge.progress)} >
-            {daysAsString()}
-          </Badge>
-        </Tooltip>
+        { hasContent() && badge &&
+          <Tooltip
+            content={badge.dateTooltip}
+            preferredPosition='above'>
+            <Badge
+              size="small"
+              progress={badge.progress}
+              status={progressToStyle(badge.progress)} >
+              {daysAsString()}
+            </Badge>
+          </Tooltip> }
       </div>
       <div className="col-start-8 justify-self-center">
         { !hasContent() && <Spinner accessibilityLabel={accessibilityLabel} size="small" /> }
