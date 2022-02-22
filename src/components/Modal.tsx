@@ -89,10 +89,16 @@ const Modal: FC<IModal> = ({
   secondaryActions,
   toast: toastObject,
 }) => {
+  const initAction = () => {
+    console.log('test')
+    primaryAction.onAction()
+    setToast(true)
+  }
   const [toast, setToast] = useState(false)
   const [disabled, setDisabled] = useState(false)
-  const [submit, setSubmit] = useState(() => primaryAction.onAction)
+  const [submit, setSubmit] = useState(() => initAction)
 
+  
   const handleToast = useCallback(() => setToast(false), []);
   const handleChange = useCallback(() => modalHandler(!isModalOpen), [isModalOpen, modalHandler]);
 

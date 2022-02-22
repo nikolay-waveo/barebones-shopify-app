@@ -9,6 +9,7 @@ import './styles/tailwind.css'
 
 const params = new URLSearchParams(window.location.search)
 
+// const SHOP_ORIGIN = params.get('shop') || "subscriber.myshopify.com"
 const SHOP_ORIGIN = params.get('shop')
 const API_KEY = params.get('apiKey')
 const HOST = params.get('host')
@@ -21,11 +22,11 @@ const config = {
 
 ReactDOM.render(
   <React.StrictMode>
-    <AppBridgeProvider config={config}>
+    {/* <AppBridgeProvider config={config}> */}
       <AppProvider i18n={enTranslations}>
         <App shopOrigin={SHOP_ORIGIN} installed={POST_INSTALL}/>
       </AppProvider>
-    </AppBridgeProvider>
+    {/* </AppBridgeProvider> */}
   </React.StrictMode>,
   document.getElementById('root')
 )

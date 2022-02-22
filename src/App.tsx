@@ -11,14 +11,15 @@ type TLocation = {
   id: string
 }
 
-type TSubscription = {
-  subscription: {
-    storeURL: string,
-    id: string,
-    status: string,
-    updatedAt: string,
-  },
+type TStatus = 'active' | 'pending' | 'stopped' | 'declined'
+
+type TSubscription =  {
+  storeURL: string,
+  id: string,
+  status: TStatus,
+  updatedAt: string,
 }
+
 
 interface IAppProps {
   shopOrigin: string,
@@ -29,16 +30,36 @@ const App: FC<IAppProps> = ({
   shopOrigin,
   installed,
 }) => {
-
   const appName = 'Products Pub/Sub'
 
+  const pubTestData = [
+    {
+      status: 'active' as TStatus,
+      storeURL: 'limiteds.myshopify.com',
+      id: '0000000',
+      updatedAt: ''
+    },
+    {
+      status: 'active' as TStatus,
+      storeURL: 'bread.myshopify.com',
+      id: '0000001',
+      updatedAt: ''
+    },
+    {
+      status: 'pending' as TStatus,
+      storeURL: 'store.myshopify.com',
+      id: '0000002',
+      updatedAt: ''
+    },
+  ]
+
+  //shop-domain = myshopify.com
   const [user] = useState(shopOrigin)
   const [postInstall, setPostInstall] = useState(installed)
-  const [publishedTo, setPublishedTo] = useState<TSubscription['subscription'][]>([]);
-  const [subscribedTo, setSubscribedTo] = useState<TSubscription['subscription'][]>([]);
+  const [publishedTo, setPublishedTo] = useState<TSubscription[]>([]);
+  const [subscribedTo, setSubscribedTo] = useState<TSubscription[]>([]);
   const [publishMode, setPublishMode] = useState(false)
   const [isPublishActive, setIsPublishActive] = useState(publishMode)
-  const [isPublishPaused, setIsPublishPaused] = useState(publishMode)
   const [showStopModal, setShowStopModal] = useState(false)
   const [showStopAllModal, setShowStopAllModal] = useState(false)
   const [showCalloutCardModal, setShowCalloutCardModal] = useState(false)
@@ -84,7 +105,7 @@ const App: FC<IAppProps> = ({
         return ({
           storeURL: shop,
           id: inventoryLocationId,
-          status: status,
+          status: status as TStatus,
           updatedAt: updatedAt,
         })
       }) || []
@@ -100,7 +121,7 @@ const App: FC<IAppProps> = ({
         return ({
           storeURL: shop,
           id: inventoryLocationId,
-          status: status,
+          status: status as TStatus,
           updatedAt: updatedAt
         })
       }) || []
@@ -112,7 +133,7 @@ const App: FC<IAppProps> = ({
         renderCount.current = false;
       }
     }
-  }, [data, isLoading, user, ])
+  }, [data, isLoading, user])
 
   useEffect(() => {
     if(locationData.isError || locationData.isLoading || locationData.data['message']) return 
@@ -145,7 +166,7 @@ const App: FC<IAppProps> = ({
   //* ---------------------------------------------------------------------------------------------------------------
   // List
 
-  const onItemIsLoading = useCallback((list: TSubscription['subscription'][]) => {
+  const onItemIsLoading = useCallback((list: TSubscription[]) => {
       const hasData = list
         .every((item) => isItemLoading(item))
         setItemIsLoading(!hasData)
@@ -207,43 +228,33 @@ const App: FC<IAppProps> = ({
     })
   }
 
-  const onPublishConnect = (store: TSubscription['subscription']) => {
+  const onPublishConnect = (store: TSubscription) => {
     useUpdateSubscriber({
       origin: user,
       shop: store.storeURL,
       accept: true,
     })
     .then((): void => {
-      const newList = publishedTo.map((item) => item.storeURL === store.storeURL ? {...item, status: "active"} : item )
+      const newList = publishedTo.map((item) => item.storeURL === store.storeURL ? {...item, status: 'active' as TStatus} : item )
       setPublishedTo(newList);
     })
   }
 
-  const onPublishDisconnect = (store: TSubscription['subscription']) => {
-    if(store.status === "active") {
-      useRemoveSubscriber({
+  const onPublishDisconnect = (store: TSubscription): Promise<any> => {
+    if (store.status === 'active') {
+      return useRemoveSubscriber({
         origin: user, 
         shop: store.storeURL
       })
-      .then((): void => {
-        const newList = publishedTo.filter((item) => item.storeURL !== store.storeURL);
-        setPublishedTo(newList);
-      })
     }
-    else {
-      useUpdateSubscriber({
-        origin: user,
-        shop: store.storeURL,
-        accept: false,
-      })
-      .then((): void => {
-        const newList = publishedTo.filter((item) => item.storeURL !== store.storeURL);
-        setPublishedTo(newList);
-      })
-    }
+    return useUpdateSubscriber({
+      origin: user,
+      shop: store.storeURL,
+      accept: false,
+    })
   }
 
-  const onSubscribeDisconnect = (store: TSubscription['subscription']) => {
+  const onSubscribeDisconnect = (store: TSubscription) => {
     useRemoveSubscription({
       origin: user,
       shop: store.storeURL
@@ -273,134 +284,72 @@ const App: FC<IAppProps> = ({
   const closeStopAllModal = (): void => setShowStopAllModal(false)
 
   const openCalloutCardModal = (): void => setShowCalloutCardModal(true)
-  const closeCalloutCardModal = (): void => setShowCalloutCardModal(false)    
+  const closeCalloutCardModal = (): void => setShowCalloutCardModal(false)
 
   const openAddToListModal = (): void => setShowAddToListModal(true)
   const closeAddToListModal = (): void => setShowAddToListModal(false)
-  
-  // useEffect(() => {
-  //   setPublishMode(publishMode)
-  // }, [publishMode])
 
-  const handlePublish = useCallback(() => {
-    if (isPublishActive) {
-      openStopModal()
-    } else {
-      useUpdatePublishStatus({
-        origin: user,
-        publish: !publishMode
-      })
-      .then(({
-          publish
-        }): void => {
-          setIsPublishActive(publish)
-          setIsPublishPaused(!publish)
-        })
-    }
-  }, [isPublishActive, user, publishMode])
-
-  const handleStopModal = useCallback(() => {
-    useUpdatePublishStatus({
-      origin: user,
-      publish: false
-    })
-    .then((): void => {
-      setPublishMode(false)
-      setIsPublishActive(false)
-      closeStopModal()
-    })
-  }, [])
-
-  const handleStopAllModal = useCallback(() => {
-    handleStopAll()
-    useUpdatePublishStatus({
-      origin: user,
-      publish: false
-    })
-    .then((): void => {
-      setPublishMode(false)
-      setIsPublishActive(false)
-      closeStopAllModal()
-    })
-  }, [])
-  
-  const handlePause = useCallback(() => {
-    useUpdatePublishStatus({
-      origin: user,
-      publish: isPublishPaused
-    })
-    .then(({
-      publish
-    }): void => setIsPublishPaused(!publish))
-  }, [user, isPublishPaused])
-
-  const handleStopAll = useCallback(() => {
-    publishedTo.forEach(store => onPublishDisconnect(store))
-  }, [])
-
-  //? ---------------------------------------------------------------------------------------------------------------
-
-  //! swap out publishMode
-
-  const __handleActivate = useCallback(() => {
+  const handleStart = useCallback(() => {
     useUpdatePublishStatus({
       origin: user,
       publish: true,
-      // pause: false,
     })
-    .then(({publish, pause}): void => {
-        setIsPublishActive(publish)
-        setIsPublishPaused(pause || !publish)
-      })
+    .then(({publish}): void => {
+      setIsPublishActive(publish)
+    })
   }, [])
 
-  const __handleDeactivate = useCallback(() => {
+  const handleStop = useCallback(() => {
     useUpdatePublishStatus({
       origin: user,
       publish: false, 
-      // pause: false
     })
-    .then(({publish, pause}): void => {
+    .then(({publish}): void => {
       setIsPublishActive(publish)
-      setIsPublishPaused(pause)
     })
     .then(() => {
       closeStopModal()
     })
   }, [])
 
-  const __handleToggle = useCallback((state: boolean) => {
-    if (state) __handleActivate()
-    else __handleDeactivate()
+  const handleToggle = useCallback((state: boolean) => {
+    if (state) handleStart()
+    else handleStop()
   }, [])
 
-  const __handleStopAll = useCallback(() => {
-    publishedTo.forEach(store => onPublishDisconnect(store))
+  const handleStopAll = useCallback(() => {
+    let list = publishedTo
+
     useUpdatePublishStatus({
       origin: user,
       publish: false,
-      // pause: false,
     })
-    .then(({publish, pause}): void => {
+    .then(({publish}): void => {
       setIsPublishActive(publish)
-      setIsPublishPaused(pause)
+    })
+    .then(() => {
+      publishedTo.forEach(store => {
+        onPublishDisconnect(store)
+          .then(() => {
+            list = list.filter((item) => item.storeURL !== store.storeURL)
+            setPublishedTo(list)
+          })
+      })
     })
     .then(() => {
       closeStopAllModal()
     })
   }, [])
 
-  const __handlePause = useCallback(() => {
+  const handlePause = useCallback(() => {
     useUpdatePublishStatus({
       origin: user,
-      publish: isPublishPaused,
-      // pause, !isPublishPaused,
+      publish: !isPublishActive,
     })
-    .then(({publish, pause}): void => {
+    .then(({publish}): void => {
       setIsPublishActive(publish)
-      setIsPublishPaused(pause)
     })
-  }, [user, isPublishPaused])
+  }, [user, isPublishActive])
 
   //? ---------------------------------------------------------------------------------------------------------------
 
@@ -413,7 +362,7 @@ const App: FC<IAppProps> = ({
             actions={[
               {
                 actionName: 'publishing',
-                actionHandler: __handleToggle,
+                actionHandler: handleToggle,
               },
               {
                 actionName: 'subscribing',
@@ -421,25 +370,23 @@ const App: FC<IAppProps> = ({
                 assets: locations
               },
             ]} />
-        : <Page
-            title={appName}
-            fullWidth={true}>
-
+        : <Page fullWidth={true}>
             <div className="grid grid-cols-1 gap-10 mb-20">
-              <PublishSection 
+              <PublishSection
                 user={user}
                 hasError={hasError}
                 errorMessage={errorMessage}
                 publishedTo={publishedTo}
                 isPublishActive={isPublishActive}
-                isPublishPaused={isPublishPaused}
 
                 handlePause={handlePause}
-                handlePublish={handlePublish}
+                handleStart={handleStart}
+                handleStop={handleStop}
+                handleStopAll={handleStopAll}
                 toggleHasError={toggleHasError}
                 onCopyToClipboard={onCopyToClipboard}
                 onPublishConnect={onPublishConnect}
-                onPublishDisconnect={onPublishConnect}
+                onPublishDisconnect={onPublishDisconnect}
 
                 showCalloutCardModal={showCalloutCardModal}
                 openCalloutCardModal={openCalloutCardModal}
@@ -449,13 +396,11 @@ const App: FC<IAppProps> = ({
                 showStopAllModal={showStopAllModal}
                 openStopAllModal={openStopAllModal}
                 closeStopAllModal={closeStopAllModal}
-                handleStopAllModal={handleStopAllModal}
                 setShowStopAllModal={setShowStopAllModal}
 
                 showStopModal={showStopModal}
                 openStopModal={openStopModal}
                 closeStopModal={closeStopModal}
-                handleStopModal={handleStopModal}
                 setShowStopModal={setShowStopModal}
                 />
 

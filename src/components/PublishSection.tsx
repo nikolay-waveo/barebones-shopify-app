@@ -12,51 +12,42 @@ import List from './List';
 import Section from './Section';
 import StorePublishingCard from './StorePublishingCard';
 
-
-type TPublishState = 'active' | 'deactivated' | 'paused'
-
 type TSubscription = {
-  subscription: {
-    storeURL: string,
-    id: string,
-    status: string,
-    updatedAt: string,
-  },
+  storeURL: string,
+  id: string,
+  status: string,
+  updatedAt: string,
 }
 
 interface IPublishSection {
   user: string,
   hasError: boolean,
   errorMessage: string,
-  publishedTo: TSubscription['subscription'][],
+  publishedTo: TSubscription[],
   isPublishActive: boolean,
-  isPublishPaused: boolean,
-  
+
   handlePause: () => void,
-  // handleActivate: () => void,
-  // handleDeactivate: () => void,
-  // handleStopAll: () => void,
-  handlePublish: () => void, //!
+  handleStart: () => void,
+  handleStop: () => void,
+  handleStopAll: () => void,
   toggleHasError: () => void,
   onCopyToClipboard: (id: string) => void,
-  onPublishConnect: (item: TSubscription['subscription']) => void,
-  onPublishDisconnect: (item: TSubscription['subscription']) => void,
-  
+  onPublishConnect: (item: TSubscription) => void,
+  onPublishDisconnect: (item: TSubscription) => void,
+
   showCalloutCardModal: boolean,
   openCalloutCardModal: () => void,
   closeCalloutCardModal: () => void,
   setShowCalloutCardModal: Dispatch<SetStateAction<boolean>>,
-  
+
   showStopAllModal: boolean,
   openStopAllModal: () => void,
   closeStopAllModal: () => void,
-  handleStopAllModal: () => void, //!
   setShowStopAllModal: Dispatch<SetStateAction<boolean>>,
 
   showStopModal: boolean,
   openStopModal: () => void,
   closeStopModal: () => void,
-  handleStopModal: () => void, //!
   setShowStopModal: Dispatch<SetStateAction<boolean>>,
 }
 
@@ -66,13 +57,11 @@ const PublishSection: FC<IPublishSection> = ({
   errorMessage,
   publishedTo,
   isPublishActive: isActive,
-  isPublishPaused: isPaused,
-  
+
   handlePause,
-  // handleActivate,
-  // handleDeactivate,
-  // handleStopAll,
-  handlePublish, //!
+  handleStart,
+  handleStop,
+  handleStopAll,
   toggleHasError,
   onCopyToClipboard,
   onPublishConnect,
@@ -86,33 +75,28 @@ const PublishSection: FC<IPublishSection> = ({
   showStopAllModal,
   openStopAllModal,
   closeStopAllModal,
-  handleStopAllModal, //!
   setShowStopAllModal,
 
   showStopModal,
   openStopModal,
   closeStopModal,
-  handleStopModal, //!
   setShowStopModal,
 }) => {
+  const hasItems = (): boolean => publishedTo.length > 0
+  const checkPaused = (active: boolean): boolean => !active && hasItems()
+  const checkShowList = (active: boolean): boolean => active || checkPaused(active)
+  const checkItemStatus = (item: TSubscription, status: string): boolean => item.status === status
 
-  const [listHasItems, setListHasItems] = useState(publishedTo.length > 0)
+  const [listHasItems, setListHasItems] = useState(hasItems())
+  const [isPaused, setIsPaused] = useState(checkPaused(isActive))
+  const [showList, setShowList] = useState(checkShowList(isActive))
 
   useEffect(() => {
-    setListHasItems(publishedTo.length > 0)
-  }, [publishedTo])
-
-  const getPublishState = (
-    publish: boolean, 
-    pause: boolean,
-    listHasItems: boolean,
-  ): TPublishState => {
-    if (publish && pause && listHasItems) return 'paused'
-    if (!publish) return 'deactivated'
-    return 'active'
-  }
-
-  const publishState = getPublishState( isActive, isPaused, listHasItems )
+    console.log(publishedTo, isActive, checkShowList(isActive))
+    setListHasItems(hasItems())
+    setIsPaused(checkPaused(isActive))
+    setShowList(checkShowList(isActive))
+  }, [isActive, publishedTo])
 
   return (
     <Section
@@ -121,8 +105,8 @@ const PublishSection: FC<IPublishSection> = ({
 
       <Card>
         <StorePublishingCard
-          activated={isActive}
-          primary={isActive
+          activated={showList}
+          primary={showList
             ? {
                 content: "Get link",
                 onAction: openCalloutCardModal, 
@@ -137,7 +121,7 @@ const PublishSection: FC<IPublishSection> = ({
             defaultButton: {
               content: 'Activate', 
               icon: TickMinor,
-              onAction: handlePublish //handleActivate
+              onAction: handleStart
             }
           }}
           onActivated={{
@@ -147,9 +131,9 @@ const PublishSection: FC<IPublishSection> = ({
             buttonTitle: "Options...",
             content: isPaused
               ? "Manage subscriptions to your store."
-              : "Share your publishing link with subscribers.",
+              : "Get your publishing link and share it with others.",
             sections: [{
-              items: !listHasItems
+              items: listHasItems
                 ? [
                     {
                       content: isPaused
@@ -159,7 +143,7 @@ const PublishSection: FC<IPublishSection> = ({
                       icon: isPaused
                         ? PlayMinor
                         : PauseMinor,
-                      onAction: handlePause // handlePause
+                      onAction: handlePause
                     },
                     {
                       destructive: true,
@@ -179,11 +163,11 @@ const PublishSection: FC<IPublishSection> = ({
             }],
           }} />
 
-      { isActive && 
+      { showList && 
         <List
           list={publishedTo}
           listText={{
-            title: "Subscribers",
+            title: "Publishing to these stores",
             description: "View and manage your subscribers.",
           }}
           emptyListText={{
@@ -210,7 +194,7 @@ const PublishSection: FC<IPublishSection> = ({
                     },
                     {
                       status: "active",
-                      displayStatus: publishState,
+                      displayStatus: isPaused ? 'paused' : 'active',
                       tooltip: isPaused ? "Publishing is paused" : "Merchant is subscribed to your store",
                       statusStyle: isPaused ? "info" : "success",
                       dateTooltip: 'Active subscription',
@@ -218,18 +202,18 @@ const PublishSection: FC<IPublishSection> = ({
                     },
                   ]}
                   options={[
-                    item.status !== 'active' 
-                    ? {
+                    checkItemStatus(item, 'active')
+                    ? null
+                    : {
                       content: 'Accept',
                       helpText: "Accept subscription to your store",
                       icon: TickMinor,
                       onAction: () => onPublishConnect(item),
                       active: true,
-                    }
-                    : null,
+                    },
                     {
-                      content: item.status !== 'active' ? 'Decline' : 'Disconnect',
-                      helpText: "Deny subscription to your store",
+                      content: checkItemStatus(item, 'active') ? 'Decline' : 'Disconnect',
+                      helpText: checkItemStatus(item, 'active') ? "Deny subscription to your store" : "Remove subscription from your store",
                       icon: CancelSmallMinor,
                       onAction: () => onPublishDisconnect(item),
                       destructive: true,
@@ -252,7 +236,7 @@ const PublishSection: FC<IPublishSection> = ({
           modalHandler={setShowStopAllModal} 
           primaryAction={{
             content: 'Remove All',
-            onAction: handleStopAllModal, // handleStopAll
+            onAction: handleStopAll,
             destructive: true
           }}
           secondaryActions={[
@@ -262,20 +246,20 @@ const PublishSection: FC<IPublishSection> = ({
             },
           ]}
           toast={{
-            content: 'Subscriptions Disconnected'
+            content: 'Subscriptions Removed'
           }} />
 
         <Modal
           title='Stop Publishing'
           content={<>
-              <p>Others will no longer be able to subscribe to your store.</p>
+              <p>You will no longer be able to recieve subscriptions requests from other Products Pub/Sub users.</p>
               <p>Do you wish to continue?</p>
             </>}
           isModalOpen={showStopModal}
           modalHandler={setShowStopModal}
           primaryAction={{
-            content: 'Stop',
-            onAction: handleStopModal, // handleDeactivate
+            content: 'Stop Publishing',
+            onAction: handleStop,
             destructive: true
           }}
           secondaryActions={[
